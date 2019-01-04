@@ -1,0 +1,77 @@
+<div class="row">
+    <div class="col-10">
+        <p class="tamano_letra_grande " style="color: darkgray;">
+            Formulario<small>/Reserva</small>
+        </p>
+    </div>
+    <div class="col-2">
+        <button [routerLink]="['/reservaciones']" class="btn btn-sm btn-primary">                                                  
+        Regresar
+    </button>
+    </div>
+</div>
+<hr>
+<div *ngIf="_serviceReserva.alerta2" class="alert alert-success alert-dismissible fade show animated fadeIn fast" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+    <strong>Reserva</strong> realizada con éxito
+</div>
+<div *ngIf="_serviceReserva.error2" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
+    <h4 class="alert-heading "></h4>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    <strong>Error </strong> {{ _serviceReserva.mensajeError}}
+</div>
+<form (ngSubmit)="reservar(formaReserva)" #formaReserva="ngForm" novalidate="">
+
+    <div class="form-group row">
+        <label class="col-4 col-form-label">Cliente:</label>
+        <div class="col-8">
+            <!--  <ngx-select-dropdown [config]="config" 
+                [options]="resp2" 
+                [(value)]="objectsArray" 
+                [multiple]="false"></ngx-select-dropdown>
+-->
+            <ng-select [items]="resp2" bindLabel="nombre" name="id_usuario" #reserva="ngModel" autofocus bindValue="id" [(ngModel)]="reserva.user_id">
+            </ng-select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-4 col-form-label">Hospedaje:</label>
+        <div class="col-8">
+            <select class="form-control" id="hospedaje_id" name="hospedaje">
+                <option value="0">Seleccione un Hospedaje</option>
+                <option *ngFor="let hospe of resp1" 
+                [value]="hospe.id">{{ hospe.descripcion }}</option>
+                </select>
+        </div>
+
+    </div>
+    <div class="form-group row has danger ">
+        <label class="col-4 col-form-label ">Fechas de Estadía:</label>
+
+
+        <div class="col-8 ">
+            <ngb-datepicker #dp (select)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden">
+            </ngb-datepicker>
+
+            <ng-template #t let-date let-focused="focused">
+                <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)" [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date" (mouseleave)="hoveredDate = null">
+            {{ date.day }}
+          </span>
+            </ng-template>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <button [disabled]="!formaReserva.valid " type="submit " class="btn btn-outline-primary btn-block ">
+                        Reservar
+                       </button>
+        </div>
+        <div class="col-4"></div>
+    </div>
+</form>

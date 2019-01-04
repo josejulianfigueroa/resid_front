@@ -1,0 +1,319 @@
+<br>
+<div *ngIf="_serviceHospedaje.alerta === 'eliminar'" class="alert alert-success alert-dismissible fade show animated fadeIn fast" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+    <strong>Hospedaje</strong> eliminado exitosamente
+</div>
+<div *ngIf="_serviceHospedaje.error === 'carga'" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
+    <h4 class="alert-heading "></h4>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    <strong>Error en la Carga: </strong> {{ _serviceHospedaje.mensajeError}}
+</div>
+<div *ngIf="_serviceHospedaje.error === 'eliminar'" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
+    <h4 class="alert-heading "></h4>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+    <strong>Error en Eliminar Hospedaje: </strong> {{ _serviceHospedaje.mensajeError}}
+</div>
+<div class="row">
+    <div class="col-6 col-md-10">
+        <p class="tamano_letra_grande " style="color: darkgray;">
+            Hospedajes<small>/Listado</small>
+        </p>
+    </div>
+    <div class="col-6 col-md-2">
+        <button (click)="abrirModalHospedajeGuardar()" class="btn btn-sm btn-primary">                                                  
+            Crear Hospedaje
+        </button>
+    </div>
+</div>
+<hr>
+<div class="row animated fadeIn fast align-content-center">
+
+
+    <div class="col-md-12 align-content-center">
+        <div class="card-deck">
+            <div class="card col-md-4 m-1 border border-primary align-content-center" *ngFor="let k of _serviceHospedaje.hospedajes | trans; let i = index">
+                <img class="card-img-top mx-auto mt-4" width="300px" height="250px" src="{{_serviceHospedaje.hospedajes[k].image | noimage }}" alt="{{_serviceHospedaje.hospedajes[k].image }}">
+                <div class="card-block">
+                    <h4 class="card-title" style="font-size: 17px;">{{ _serviceHospedaje.hospedajes[k].descripcion }}</h4>
+                    <p class="card-text">Tipo: {{ _serviceHospedaje.hospedajes[k].tipo }}</p>
+                    <p class="card-text"><small class="text-muted">Precio: {{ _serviceHospedaje.hospedajes[k].precio }}</small></p>
+                    <div class="row">
+                        <div class="col-md-auto">
+                            <button alt="Eliminar" (click)="abrirModalEliminar(_serviceHospedaje.hospedajes[k].id,k,_serviceHospedaje.hospedajes[k].descripcion)" type="button" class="btn btn-sm btn-danger">
+                        <i alt="Eliminar" title="Eliminar" class="fas fa-trash">&nbsp;Eliminar</i></button>&nbsp;
+
+                            <button alt="Editar" (click)="abrirModalHospedaje(_serviceHospedaje.hospedajes[k],k)" type="button" class="btn btn-sm btn-primary">
+                        <i alt="Editar" title="Editar"  class="fas fa-edit">&nbsp;Editar</i></button>&nbsp;
+
+
+                            <button alt="Reservar" (click)="abrirModalHospedaje(_serviceHospedaje.hospedajes[k],k)" type="button" class="btn btn-sm btn-success">
+                            <i class="fas fa-concierge-bell" title="Reservar">&nbsp;Reservar</i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+
+            <button *ngIf="_serviceHospedaje.next_page !== null" (click)="cargarMas()" type="button" class="btn btn-outline-primary btn-block">
+                    Cargar más videos
+                    </button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="(_serviceHospedaje.hospedajes | trans).length === 0 && !_serviceHospedaje.loading && !_serviceHospedaje.error" style="margin-left: 25px; " class="alert col-md-11 alert-info" role="alert">
+    <strong>No hay</strong> hospedajes que mostrar
+</div>
+<div class="col-md-12">
+    <div *ngIf="_serviceHospedaje.loading" width="100%" class="alert alert-info" style=" text-align: center;" role="alert">
+        <strong>Cargando...</strong>
+        <div class="loader loader--style1" title="0">
+            <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+                <path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+                  s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+                  c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"/>
+                <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+                  C22.32,8.481,24.301,9.057,26.013,10.047z">
+                  <animateTransform attributeType="xml"
+                    attributeName="transform"
+                    type="rotate"
+                    from="0 20 20"
+                    to="360 20 20"
+                    dur="0.5s"
+                    repeatCount="indefinite"/>
+                  </path>
+                </svg>
+        </div>
+        <p>Espere por favor</p>
+    </div>
+</div>
+
+
+
+<!-- Modal Eliminar-->
+<div class="modal fade" id="ModalEliminar_Hospedaje" role="dialog" data-backdrop="false">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar Hospedaje</h5>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro de eliminar el hospedaje: {{ nombre }}?
+            </div>
+            <div class="modal-footer">
+                <button type="button" (click)="cerrarModalEliminar('SI')" class="btn btn-sm btn-success">Si</button>
+                <button (click)="cerrarModalEliminar('NO')" type="button" class="btn btn-sm btn-primary">No</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Hospedaje Editar-->
+<div class="modal fade" id="Modal_Hospedaje" role="dialog" data-backdrop="false">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Hospedaje Id: {{ hospedaje.id }}</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-9">
+                        <p class="tamano_letra_grande " style="color: darkgray;">
+                            Formulario<small>/Editar Hospedaje</small>
+                        </p>
+                    </div>
+                    <div class="col-3">
+                        <button (click)="cerrarModalHospedaje('NO')" type="button" class="btn btn-sm btn-primary">Cerrar</button>
+                    </div>
+                </div>
+                <hr>
+                <div *ngIf="_serviceHospedaje.alerta === 'actualizar'" class="alert alert-success alert-dismissible fade show animated fadeIn fast" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                      <span aria-hidden="true">&times;</span>
+                                                    </button>
+                    <strong>Hospedaje</strong> actualizado con éxito
+                </div>
+                <div *ngIf="_serviceHospedaje.error === 'actualizar'" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
+                    <h4 class="alert-heading "></h4>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                    <strong>Error en Actualizar: </strong> {{ _serviceHospedaje.mensajeError}}
+                </div>
+                <form (ngSubmit)="actualizar_hospedaje(forma_hospedaje)" #forma_hospedaje="ngForm" novalidate="">
+                    <!-- <input [(ngModel)]="hospedaje.reservacion_id" #reservacion_id="ngModel" type="hidden" name="reservacion_id">
+                                -->
+                    <div class="form-group row  has danger">
+                        <label class="col-4 col-form-label">Descripcion:</label>
+                        <div class="col-8">
+                            <input class="form-control" [(ngModel)]="hospedaje.descripcion" #descripcion="ngModel" type="text" placeholder="Descripcion..." name="descripcion" required minlength="2">
+                            <div *ngIf="descripcion.errors?.required " class="form-control-feedback ">
+                                El campo es requerido
+                            </div>
+                            <div class="form-control-feedback " *ngIf="descripcion.errors?.minlength ">
+                                Por lo menos {{ descripcion.errors.minlength.requiredLength }} caracteres
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row  has danger">
+                        <label class="col-4 col-form-label">Precio:</label>
+                        <div class="col-8">
+                            <input class="form-control" [(ngModel)]="hospedaje.precio" #precio="ngModel" type="text" placeholder="Precio..." name="precio" required minlength="2">
+                            <div *ngIf="precio.errors?.required " class="form-control-feedback ">
+                                El campo es requerido
+                            </div>
+                            <div class="form-control-feedback " *ngIf="precio.errors?.minlength ">
+                                Por lo menos {{ precio.errors.minlength.requiredLength }} caracteres
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row  has danger">
+                        <label class="col-4 col-form-label">Imagen:</label>
+                        <div class="col-8">
+                            <img *ngIf="mostrar == false" class="card-img-top " width="100%" height="150px" src="{{ hospedaje.image | noimage }}" alt="{{ tmp_imagen }}">
+                            <img *ngIf="mostrar == true" class="card-img-top" width="100%" height="150px" [src]="url">
+                            <input class="form-control" id="image_hospedaje" (change)=changeValue($event) type="file" name="image">
+
+                        </div>
+                    </div>
+                    <div class="form-group row  has danger">
+                        <label class="col-4 col-form-label">Tipo:</label>
+                        <div class="col-8">
+
+                            <select class="form-control" [(ngModel)]="hospedaje.tipo" id="tipo" #tipo="ngModel" name="tipo">
+                                        <option [value]="hospedaje.tipo">{{hospedaje.tipo}}</option>
+                                        <option *ngFor="let hospe of tipo_hospedaje" 
+                                        [value]="hospe">{{ hospe }}</option>
+                                        </select>
+                        </div>
+                    </div>
+
+                    <!--[disabled]="!forma.valid " -->
+                    <div class="form-group row ">
+                        <div class="input-group col-md-12 ">
+                            <button [disabled]="!forma_hospedaje.valid " type="submit " class="btn btn-sm btn-outline-primary btn-block ">
+                                    Actualizar
+                                  </button>
+                        </div>
+                    </div>
+
+                </form>
+                <!-- <div class="modal-footer">
+                    </div>-->
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- Modal Hospedaje Guardar-->
+<div class="modal fade" id="Modal_Hospedaje_Guardar" role="dialog" data-backdrop="false">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Guardar Hospedaje</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-9">
+                        <p class="tamano_letra_grande " style="color: darkgray;">
+                            Formulario<small>/Guardar Hospedaje</small>
+                        </p>
+                    </div>
+                    <div class="col-3">
+                        <button (click)="cerrarModalHospedajeGuardar('NO')" type="button" class="btn btn-sm btn-primary">Cerrar</button>
+                    </div>
+                </div>
+                <hr>
+                <div *ngIf="_serviceHospedaje.alerta === 'guardar'" class="alert alert-success alert-dismissible fade show animated fadeIn fast" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                          <span aria-hidden="true">&times;</span>
+                                                        </button>
+                    <strong>Hospedaje</strong> guardado con éxito
+                </div>
+                <div *ngIf="_serviceHospedaje.error === 'guardar'" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
+                    <h4 class="alert-heading "></h4>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                    <strong>Error en Guardar Hospedaje: </strong> {{ _serviceHospedaje.mensajeError}}
+                </div>
+                <form (ngSubmit)="guardar_hospedaje(forma_hospedaje_guardar)" #forma_hospedaje_guardar="ngForm" novalidate="">
+                    <!-- <input [(ngModel)]="hospedaje.reservacion_id" #reservacion_id="ngModel" type="hidden" name="reservacion_id">
+                                    -->
+                    <div class="form-group row  has danger">
+                        <label class="col-4 col-form-label">Descripcion:</label>
+                        <div class="col-8">
+                            <input class="form-control" [(ngModel)]="hospedaje_guardar.descripcion" #descripcion="ngModel" type="text" placeholder="Descripcion..." name="descripcion" required minlength="2">
+                            <div *ngIf="descripcion.errors?.required " class="form-control-feedback ">
+                                El campo es requerido
+                            </div>
+                            <div class="form-control-feedback " *ngIf="descripcion.errors?.minlength ">
+                                Por lo menos {{ descripcion.errors.minlength.requiredLength }} caracteres
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row  has danger">
+                        <label class="col-4 col-form-label">Precio:</label>
+                        <div class="col-8">
+                            <input class="form-control" [(ngModel)]="hospedaje_guardar.precio" #precio="ngModel" type="text" placeholder="Precio..." name="precio" required minlength="2">
+                            <div *ngIf="precio.errors?.required " class="form-control-feedback ">
+                                El campo es requerido
+                            </div>
+                            <div class="form-control-feedback " *ngIf="precio.errors?.minlength ">
+                                Por lo menos {{ precio.errors.minlength.requiredLength }} caracteres
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row  has danger">
+                        <label class="col-4 col-form-label">Imagen:</label>
+                        <div class="col-8">
+                            <img *ngIf="mostrar == true" class="card-img-top" width="100%" height="150px" [src]="url">
+                            <input class="form-control" id="image_hospedaje2" (change)=changeValue($event) type="file" name="image">
+
+                        </div>
+                    </div>
+                    <div class="form-group row  has danger">
+                        <label class="col-4 col-form-label">Tipo:</label>
+                        <div class="col-8">
+
+                            <select class="form-control" [(ngModel)]="hospedaje_guardar.tipo" id="tipo" #tipo="ngModel" name="tipo">
+                                            <option *ngFor="let hospe of tipo_hospedaje" 
+                                            [value]="hospe">{{ hospe }}</option>
+                                            </select>
+                        </div>
+                    </div>
+
+                    <!--[disabled]="!forma.valid " -->
+                    <div class="form-group row ">
+                        <div class="input-group col-md-12 ">
+                            <button [disabled]="!forma_hospedaje_guardar.valid " type="submit " class="btn btn-sm btn-outline-primary btn-block ">
+                                       Guardar
+                                      </button>
+                        </div>
+                    </div>
+
+                </form>
+                <!-- <div class="modal-footer">
+                        </div>-->
+            </div>
+
+        </div>
+    </div>
+</div>
