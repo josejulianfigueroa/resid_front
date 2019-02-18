@@ -133,8 +133,9 @@ export class ReservarComponent {
 
   reservar( forma: NgForm) {
 
-
-     this.reserva.user_id = this.objectsArray[0].id;
+    console.log(forma.value.id_usuario );
+   //  console.log('Name:' + userForm.controls['name'].value);
+      this.reserva.user_id = forma.value.id_usuario;
 
      /*this.str1 = $('#fechainicio').val();
      this.res = this.str1.split('-');

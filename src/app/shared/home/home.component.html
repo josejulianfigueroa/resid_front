@@ -1,0 +1,95 @@
+<div class="col-md-12" *ngIf="images == null">
+    <br> <br> <br> <br>
+    <div width="100%" height="200" style="text-align: center;">
+        <div class="loader loader--style1" title="0">
+            <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="50px" height="50px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+                    <path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+                      s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+                      c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"/>
+                    <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+                      C22.32,8.481,24.301,9.057,26.013,10.047z">
+                      <animateTransform attributeType="xml"
+                        attributeName="transform"
+                        type="rotate"
+                        from="0 20 20"
+                        to="360 20 20"
+                        dur="0.5s"
+                        repeatCount="indefinite"/>
+                      </path>
+                    </svg>
+        </div><br>
+        <p><strong>Bienvenido...</strong></p>
+    </div>
+</div>
+
+<div class="contenedor_flotante" *ngIf="images">
+    <div class="col-md-6 col-sm-12">
+        <div class="flotante text-white" style="width:85%; background: rgb(0, 0, 0); 
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+transition: 0.3s;">
+            <div class="card-header" style="background: #D35400; color:white;"> Busca tu Alojamiento</div>
+            <div class="card-body">
+                <form (ngSubmit)="BuscarDispo(formaDispo)" #formaDispo="ngForm">
+                    <div class="form-group row has danger" style="padding-top: 5px;">
+                        <label style="padding-left: 35px;" class="col-md-5 col-form-label">Fecha de Entrada:</label>
+                        <div class="col-md-4" style="padding-left: 5px; margin-left: 10px;">
+                            <input [minDate]=date_inicio [maxDate]=date_fin required name="fecha1" [(ngModel)]="fechas.fecha1" type="text" (click)="d.toggle()" class="form-control form-control-sm" size="5" readonly ngbDatepicker #d="ngbDatepicker" />
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                    <div class="form-group row has danger" style="padding-top: 5px;">
+                        <label style="padding-left: 35px;" class="col-md-5 col-form-label">Fecha de Salida:</label>
+                        <div class="col-md-4" style="padding-left: 5px; margin-left: 10px;">
+                            <input [minDate]="fechas.fecha1" [maxDate]=date_fin required name="fecha2" [(ngModel)]="fechas.fecha2" type="text" (click)="d2.toggle()" class="form-control form-control-sm" size="5" readonly ngbDatepicker #d2="ngbDatepicker" />
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <button [disabled]="!formaDispo.valid " type="submit" class="btn btn-outline-primary btn-block ">
+                            Buscar
+                           </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <ngb-carousel *ngIf="images" #carousel>
+        <ng-template ngbSlide>
+            <img [src]="images[0]" style="width:100%; height:400;" alt="Residencias">
+            <div class="carousel-caption ">
+                <h3>Ofrecemos Apartamentos cómodos y equipados con</h3>
+                <p>Aire Acondicionado, Television por cable, Area común con parrillera</p>
+            </div>
+        </ng-template>
+        <ng-template ngbSlide>
+            <img [src]="images[1]" style="width:100%; height:400;" alt="Residencias">
+            <div class="carousel-caption ">
+                <h3>Servicios como</h3>
+                <p>Estacionamiento Privado, Lavanderia, Conexión a Internet</p>
+            </div>
+        </ng-template>
+        <ng-template ngbSlide>
+            <img [src]="images[2]" style="width:100%; height:400;" alt="Residencias">
+            <div class="carousel-caption ">
+                <h3>Además de</h3>
+                <p>Cocina con: Nevera, Horno Microondas, Licuadora, Cafetera, Tosti Arepas.</p>
+            </div>
+        </ng-template>
+        <ng-template ngbSlide>
+            <img [src]="images[3]" style="width:100%; height:400;" alt="Residencias">
+            <div class="carousel-caption ">
+                <h3>Ven y Aprovecha</h3>
+                <p>Un lugar para estar como en casa.</p>
+            </div>
+        </ng-template>
+    </ngb-carousel>
+</div>
+<br><br>
+<p align="center" *ngIf="carga2"><iframe style="width:100%;" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.co.ve/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=Residencias+El+Cristo+del+Buen+Viaje&amp;aq=&amp;sll=6.668064,-66.578612&amp;sspn=12.719477,21.643066&amp;t=h&amp;ie=UTF8&amp;hq=Residencias+El+Cristo+del+Buen+Viaje&amp;hnear=&amp;ll=11.015193,-63.815675&amp;spn=0.098403,0.169086&amp;z=13&amp;iwloc=A&amp;cid=4167055271725806054&amp;output=embed"></iframe><br
+    /><small><a href="https://maps.google.co.ve/maps?f=q&amp;source=embed&amp;hl=es&amp;geocode=&amp;q=Residencias+El+Cristo+del+Buen+Viaje&amp;aq=&amp;sll=6.668064,-66.578612&amp;sspn=12.719477,21.643066&amp;t=h&amp;ie=UTF8&amp;hq=Residencias+El+Cristo+del+Buen+Viaje&amp;hnear=&amp;ll=11.015193,-63.815675&amp;spn=0.098403,0.169086&amp;z=13&amp;iwloc=A&amp;cid=4167055271725806054" style="color:#0000FF;text-align:right">Ver mapa mas grande</a></small></p>

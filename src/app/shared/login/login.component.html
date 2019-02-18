@@ -1,40 +1,45 @@
-<div class="mt-4 col-8 offset-2">
-    <div class="card">
-        <div class="card-header">
-            <div class="tamano_letra_grande " style="color: darkgray;">
-                Login<small>/Ingreso</small>
+<div class="row" style="padding-top: 40px">
+    <div class="col-md-4 col-sm-12"></div>
+    <div class="col-md-4 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="tamano_letra_grande " style="color: darkgray;">
+                    Login<small>/Ingreso</small>
+                </div>
+            </div>
+            <div class="card-body m-2">
+                <form #loginForm=ngForm (ngSubmit)="onSubmit()">
+                    <div class="alert alert-danger alert-dismissable" [hidden]="!error">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> {{error}}
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputEmail3" class="col-sm-3 col-form-label">Email</label>
+                        <div class="col-sm-9">
+                            <input type="email" name="email" class="form-control" id="inputEmail3" placeholder="Email" [(ngModel)]="form.email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputPassword3" class="col-sm-3 col-form-label">Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" name="password" class="form-control" id="inputPassword3" placeholder="Password" [(ngModel)]="form.password" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-9 offset-3">
+                            <button type="submit" class="btn btn-outline-primary btn-block" [disabled]="!loginForm.valid">Ingresar</button>
+                        </div>
+                    </div> <small class="float-left">
+                    <a routerLink="/signup" >¿Aún no te has registrado?</a>
+                        </small>
+                    <small class="float-right">
+                    <a routerLink="/request-password-reset">Reset Password</a>
+                        </small>
+                </form>
             </div>
         </div>
-        <div class="card-body m-2">
-            <form #loginForm=ngForm (ngSubmit)="onSubmit()">
-
-                <div class="alert alert-danger" [hidden]="!error">
-                    {{error}}
-                </div>
-                <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
-                    <div class="col-sm-10">
-                        <input type="email" name="email" class="form-control" id="inputEmail3" placeholder="Email" [(ngModel)]="form.email" required>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
-                    <div class="col-sm-10">
-                        <input type="password" name="password" class="form-control" id="inputPassword3" placeholder="Password" [(ngModel)]="form.password" required>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-sm-10 offset-2">
-                        <button type="submit" class="btn btn-outline-primary btn-block" [disabled]="!loginForm.valid">Ingresar</button>
-                    </div>
-                </div>
-                <a routerLink="/signup" class="float-left">¿Aún no te has registrado?</a>
-                <small class=float-right>
-            <a routerLink="/request-password-reset">Reset Password</a>
-          </small>
-            </form>
-        </div>
     </div>
+    <div class="col-md-4 col-sm-12"></div>
 </div>

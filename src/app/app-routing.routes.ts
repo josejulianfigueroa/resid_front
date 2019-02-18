@@ -4,10 +4,14 @@ import { NgModule, Component } from '@angular/core';
 // Necesario para las Rutas
 import { Routes, RouterModule } from '@angular/router';
 
-// Componenetes Varios
- import { AdminComponent } from './admin/admin/admin.component';
+// Componenetes Shared
+import { HomeComponent } from './shared/home/home.component';
+
+// Componentes Principales
+import { HospedajeComponent } from './hospedaje/hospedaje.component';
+import {ReservacionesComponent } from './reservaciones/reservaciones.component';
+
  import { ReservarComponent } from './shared/reservar/reservar.component';
- import { HospedajesComponent } from './admin/hospedajes/hospedajes.component';
  import { SearchReservaComponent } from './admin/search-reserva/search-reserva.component';
 
 
@@ -22,14 +26,27 @@ import { BeforeLoginServiceService } from './services/before-login-service.servi
 import { AfterLoginServiceService } from './services/after-login-service.service';
 
 const APP_ROUTES: Routes = [
-      { path: 'home', component: AdminComponent },
-      { path: 'reservar', component: ReservarComponent },
-      { path: 'hospedajes', component: HospedajesComponent },
-      { path: 'reservaciones', component: AdminComponent },
-      { path: 'pagos', component: AdminComponent },
-      { path: 'usuarios', component: AdminComponent },
-      { path: 'search/:termino', component: SearchReservaComponent },
 
+      { path: 'home',
+        component: HomeComponent
+      },
+      { path: 'reservar',
+        component: ReservarComponent,
+        canActivate: [AfterLoginServiceService]
+      },
+      {
+        path: 'hospedaje/:termino',
+        component: HospedajeComponent
+      },
+      {
+        path: 'reservaciones',
+        component: ReservacionesComponent,
+        canActivate: [AfterLoginServiceService]
+      },
+      {
+        path: 'search/:termino', component: SearchReservaComponent,
+        canActivate: [BeforeLoginServiceService]
+      },
       {
         path: 'login',
         component: LoginComponent,
@@ -56,7 +73,7 @@ const APP_ROUTES: Routes = [
         canActivate: [BeforeLoginServiceService]
       },
 
-    //  { path: '**', pathMatch: 'full', redirectTo: 'home' }
+      { path: '**', pathMatch: 'full', redirectTo: 'home' }
     ];
 
 export const APP_ROUTING = RouterModule.forRoot(APP_ROUTES, { useHash: true} );

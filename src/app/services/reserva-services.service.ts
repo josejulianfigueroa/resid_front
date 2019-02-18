@@ -1,29 +1,35 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Reservacion } from '../interfaces/reservacion.interface';
 import { Reserva } from '../interfaces/reserva_sola.interface';
 
 import { map } from 'rxjs/operators';
 
+// Notificacion
+import {  SnotifyService } from 'ng-snotify';
 
-
+// Configuracion
+import { URL_SERVICIOS } from '../config/config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReservaServicesService {
 
- url = 'http://127.0.0.1:8000/api/';
+ url = URL_SERVICIOS;
  status = 'Por Confirmar';
  loading = true;
  alerta2 = false;
+ alerta_eliminar = false;
  reservaciones: Reservacion[] = [];
  reservacionesFiltrado: Reservacion[] = [];
- termino;
+ termino = '';
  mensajeError = '';
  error = false;
  error2 = false;
+ collectionSize;
 
 httpOptions = {
   headers: new HttpHeaders({
@@ -32,74 +38,58 @@ httpOptions = {
   })
 };
 
-  constructor(private http: HttpClient) {
-        this.cargar_hospedajes();
-        this.cargar_reservaciones()
-        .subscribe( (resp: any) => {
-          setTimeout( () => {
-            this.reservaciones = resp.data;
-            this.loading = false;
-          }, 2000);
+  constructor(private http: HttpClient,
+              private Notify: SnotifyService,
+              private router: Router) {
+   }
 
-         }, ( errorServicio) => {
-          this.error = true;
+   // Carga de Reservaciones Principal
+   cargar_reservaciones(status: string , user_id: number) {
+      const url = `${ this.url }users/reservaciones?per_page=100&user_id=${user_id}&status=${status}`;
+
+      return this.http.post(url, this.status)
+       .subscribe( (resp: any) => {
+        setTimeout( () => {
+          this.reservaciones = resp.data;
+          this.reservaciones = this.reservaciones.filter(x => x.es_de_usuario !== null);
+           // Paginacion
+          this.collectionSize = this.reservaciones.length;
+          // Paginacion
           this.loading = false;
-          console.log(errorServicio.message);
-          this.mensajeError = errorServicio.message;
-        });
+        }, 1000);
+
+       }, ( errorServicio) => {
+        this.error = true;
+        this.loading = false;
+        this.mensajeError = errorServicio.message;
+      });
    }
 
-   // Inicio Metodos para la Base de Datos
-   eliminar_reservaciones(id: number) {
-        const url = `${ this.url }reservaciones/${id}`;
-
-        return this.http.delete( url )
-                        .pipe(map(res => res));
-   }
-
-   cargar_hospedajes() {
-
-        const url = `${ this.url }hospedajes`;
-
-        return this.http.get( url );
-  }
-
-   cargar_reservaciones() {
-/*
-      const headers = new HttpHeaders ({
-        'Authorization': 'Bearer BQBILzfnOzW82FK9Xh7lbrOqvRJn8HkY3qDaiUo9zht_LatzQk-ePuXCQp3rZcFYKEZMia8DPqI_kLQUMYE'
-      });*/
-
-   // return this.http.get(`${ this.url }`);
-      const url = `${ this.url }users/reservaciones`;
-      return this.http.post(url, this.status);
-
-   }
+   // Guardar Reservaciones
    guardar_reserva(reserva: Reserva ) {
     const url = `${ this.url }reservaciones`;
 
     return this.http.post(url, reserva , this.httpOptions )
               .subscribe( (resp: any) => {
-               // console.log(resp);
               this.alerta2 = true;
+              this.error2 = false;
               this.reservaciones.push(resp.data);
+              this.router.navigateByUrl('/reservaciones');
+              this.Notify.info('Ya Reservaste un Alojamiento, Te esperamos!', 'Hecho', {
+                timeout: 7500,
+                showProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                icon: 'assets/logo/favicon.png'
+              });
 
               }, ( errorServicio) => {
-               // console.log(errorServicio);
                 this.error2 = true;
-                // this.mensajeError = errorServicio.message;
                 this.mensajeError = errorServicio.error.error;
               });
   }
 
-  // Fin Metodos para la Base de Datos
-
-
-
-
-
-
-  // Inicio Metodos para los Componentes
+// Filtrar Reservaciones por nombre del cliente
    private filtrarReservas( termino: string ) {
     this.reservacionesFiltrado = [];
     this.termino = termino.toLocaleLowerCase();
@@ -111,35 +101,65 @@ httpOptions = {
         this.reservacionesFiltrado.push( rese );
       }
     });
+    this.reservaciones = this.reservacionesFiltrado;
+      // Paginacion
+    this.collectionSize = this.reservacionesFiltrado.length;
+      // Paginacion
   }
 
-  buscarReserva ( termino: string ) {
-    if (this.reservaciones.length === 0) {
-        this.cargar_reservaciones()
-            .subscribe( (resp: any) => {
-              this.reservaciones = resp.data;
-             });
-        this.filtrarReservas( termino );
-      } else {
-        this.filtrarReservas( termino );
-      }
+  // Cargar Reservaciones Modo Busqueda
+  cargar_reservaciones2(status: string , user_id: number) {
+    const url = `${ this.url }users/reservaciones?per_page=100&user_id=${user_id}&status=${status}`;
+
+    return this.http.post(url, this.status);
+
+ }
+// Busqueda de Reservaciones
+  buscarReserva( termino: string ) {
+
+    this.cargar_reservaciones2( 'vacio' , 0)
+    .subscribe( (resp: any) => {
+
+        this.reservaciones = resp.data;
+        this.reservaciones = this.reservaciones.filter(x => x.es_de_usuario !== null);
+         // Paginacion
+        this.collectionSize = this.reservaciones.length;
+        // Paginacion
+        this.loading = false;
+
+        if (termino.length > 0) {
+          this.filtrarReservas( termino );
+        }
+     }, ( errorServicio) => {
+      this.error = true;
+      this.loading = false;
+      this.mensajeError = errorServicio.message;
+    });
+
   }
 
+  // Eliminar Reservaciones
+  eliminar_reservaciones(id: number) {
+    const url = `${ this.url }reservaciones/${id}`;
+    return this.http.delete( url )
+                    .pipe(map(res => res));
+}
   eliminar_reserva(id: number, k: number) {
 
         this.eliminar_reservaciones( id )
             .subscribe( respuesta => {
-                        console.log(respuesta);
+              console.log(respuesta);
                           if ( respuesta ) {
                             delete this.reservaciones[k];
                             delete this.reservacionesFiltrado[k];
-                              // console.error(respuesta);
+                            this.alerta_eliminar = true;
+
+                            // Paginacion
+                             this.collectionSize = this.reservaciones.length;
+                             // Paginacion
+
                           }
                       });
 }
 
-
-
-
-  // Fin Metodos para los Componentes
 }

@@ -3,12 +3,15 @@ import { HttpClient, HttpHeaders, } from '@angular/common/http';
 import { Hospedaje } from '../interfaces/hospedajes.interface';
 import { map } from 'rxjs/operators';
 
+// Configuracion
+import { URL_SERVICIOS } from '../config/config';
+
 @Injectable({
   providedIn: 'root'
 })
 export class HospedajeServicesService {
 
-  url = 'http://127.0.0.1:8000/api/';
+  url = URL_SERVICIOS;
   loading = true;
   loading2 = false;
   alerta = null;
@@ -32,7 +35,7 @@ export class HospedajeServicesService {
 
   constructor(private http: HttpClient) {
 
-    this.cargar_hospedajes()
+   /* this.cargar_hospedajes()
     .subscribe( (resp: any) => {
       setTimeout( () => {
         this.hospedajes = resp.data;
@@ -52,31 +55,54 @@ export class HospedajeServicesService {
       console.log(errorServicio.message);
       this.mensajeError = errorServicio.message;
     });
+*/
 
   }
    // Inicio Metodos para la Base de Datos
    eliminar_hospedajes(id: number) {
     const url = `${ this.url }hospedajes/${id}`;
-
     return this.http.delete( url )
                     .pipe(map(res => res));
-}
+  }
   cargar_hospedajes() {
      const url = `${ this.url }hospedajes`;
      return this.http.get( url );
        }
 
+  cargar_hospedajes_fechas( parametros: string) {
+
+        const url = `${ this.url }hospedaje_fecha?per_page=2&${ parametros }`;
+
+        return this.http.get( url ).subscribe( (resp: any) => {
+          setTimeout( () => {
+            this.hospedajes = resp.data;
+            this.loading = false;
+
+            if (resp.next_page_url === null) {
+              this.next_page = null;
+            } else {
+
+              if (resp.next_page_url !== undefined ) {
+                this.arre = resp.next_page_url.split('?');
+                this.next_page = this.arre[1];
+              }
+          }
+          }, 2000);
+         }, ( errorServicio) => {
+          this.error = 'carga';
+          this.loading = false;
+          console.log(errorServicio.message);
+          this.mensajeError = errorServicio.message;
+        });
+          }
+
   cargar_mas_hospedajes() {
 
     const url = `${ this.url }hospedajes?${ this.next_page }`;
-    console.log(this.next_page);
-    console.log(url);
 
     return this.http.get( url ).subscribe( (resp: any) => {
       setTimeout( () => {
         this.loading = false;
-
-        console.log(resp.data);
 
         if (resp.next_page_url === null) {
           this.next_page = null;
@@ -84,9 +110,6 @@ export class HospedajeServicesService {
           this.arre = resp.next_page_url.split('?');
           this.next_page = this.arre[1];
         }
-
-
-
        resp.data.forEach( rese => {
 
         this.hospedajes.push( rese );

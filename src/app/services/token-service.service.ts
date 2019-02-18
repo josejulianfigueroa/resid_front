@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 
+// Configuracion
+import { URL_SERVICIOS } from '../config/config';
+
 @Injectable()
 export class TokenServiceService {
   private iss = {
-    login: 'http://127.0.0.1:8000/api/login',
-    signup: 'http://127.0.0.1:8000/api/signup'
+    login: URL_SERVICIOS + 'login',
+    signup: URL_SERVICIOS + 'signup'
   };
 
   constructor() { }
@@ -22,6 +25,10 @@ export class TokenServiceService {
 
   remove() {
     localStorage.removeItem('token');
+    localStorage.removeItem('nombre');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('expires_in');
+    localStorage.removeItem('id');
   }
 
   isValid() {

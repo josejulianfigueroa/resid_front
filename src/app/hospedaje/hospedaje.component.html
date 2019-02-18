@@ -1,24 +1,66 @@
-<br>
-<div *ngIf="_serviceHospedaje.alerta === 'eliminar'" class="alert alert-success alert-dismissible fade show animated fadeIn fast" role="alert">
+<!--Mensajes sobre Reservas-->
+<!--Alerta de Reserva Realizada-->
+<div *ngIf="_serviceReserva.alerta2" class="alert alert-success alert-dismissible fade show animated fadeIn fast" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-    <strong>Hospedaje</strong> eliminado exitosamente
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+    <strong>Reserva</strong> realizada con éxito
 </div>
-<div *ngIf="_serviceHospedaje.error === 'carga'" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
+<!--Alerta de Error en Reserva-->
+<div *ngIf="_serviceReserva.error2" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
     <h4 class="alert-heading "></h4>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-    <strong>Error en la Carga: </strong> {{ _serviceHospedaje.mensajeError}}
+    <strong>Error </strong> {{ _serviceReserva.mensajeError}}
 </div>
-<div *ngIf="_serviceHospedaje.error === 'eliminar'" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
+<!--Mensajes sobre Hospedajes-->
+<!--Alerta de Hospedaje Eliminado-->
+<div *ngIf="_serviceHospedaje.alerta === 'eliminar'" class="alert alert-success alert-dismissible fade show animated fadeIn fast" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+    <strong>Hospedaje</strong> eliminado exitosamente
+</div>
+<!--Alerta de Error en la Carga de Hospedajes-->
+<div *ngIf="_serviceHospedaje.error === 'carga'" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
     <h4 class="alert-heading "></h4>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
+    <strong>Error en la Carga: </strong> {{ _serviceHospedaje.mensajeError}}
+</div>
+<!--Alerta de Error en Eliminar Hospedaje-->
+<div *ngIf="_serviceHospedaje.error === 'eliminar'" class="alert alert-danger alert-dismissible fade animated fadeIn fast" role="alert">
+    <h4 class="alert-heading "></h4>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
     <strong>Error en Eliminar Hospedaje: </strong> {{ _serviceHospedaje.mensajeError}}
 </div>
+
+
+<!--Formulario de Busqueda de Hospedajes Inicio-->
+<form (ngSubmit)="BuscarDispo(formaDispo)" #formaDispo="ngForm">
+    <div class="form-group row has danger" style="padding-top: 5px;">
+        <label style="padding-left: 20px;" class="col-md-2 col-form-label">Fecha de Entrada:</label>
+        <div class="col-md-2" style="padding-left: 10px;">
+            <input [minDate]=date_inicio [maxDate]=date_fin required name="fecha1" [(ngModel)]="fechas.fecha1" type="text" (click)="d.toggle()" class="form-control form-control-sm" size="4" readonly ngbDatepicker #d="ngbDatepicker" />
+        </div>
+        <label style="padding-left: 20px;" class="col-md-2 col-form-label">Fecha de Salida:</label>
+        <div class="col-md-2" style="padding-left: 10px;">
+            <input [minDate]="fechas.fecha1" [maxDate]=date_fin required name="fecha2" [(ngModel)]="fechas.fecha2" type="text" (click)="d2.toggle()" class="form-control form-control-sm" size="4" readonly ngbDatepicker #d2="ngbDatepicker" />
+        </div>
+        <div class="col-md-2" style="padding-top: 4px;">
+            <button type="submit" class="btn btn-outline-primary btn-sm btn-block ">
+            Buscar
+           </button>
+        </div>
+    </div>
+</form>
+<!--Formulario de Busqueda de Hospedajes Fin-->
+
+<!--
 <div class="row">
     <div class="col-6 col-md-10">
         <p class="tamano_letra_grande " style="color: darkgray;">
@@ -30,11 +72,20 @@
             Crear Hospedaje
         </button>
     </div>
+</div>-->
+<!--Listado de Hospedajes-->
+<div class="row" *ngIf="(_serviceHospedaje.hospedajes | trans).length !== 0">
+    <div class="col-md-2">
+        <p class="tamano_letra_grande " style="color: darkgray;">
+            Hospedajes<small>/Listado</small>:&nbsp;
+        </p>
+    </div>
+    <div class="col-md-10 tamano_letra_peque" style="padding-left: 30px;">
+        ¡Enhorabuena tenemos alojamientos disponibles para las fechas de búsqueda!
+    </div>
 </div>
 <hr>
 <div class="row animated fadeIn fast align-content-center">
-
-
     <div class="col-md-12 align-content-center">
         <div class="card-deck">
             <div class="card col-md-4 m-1 border border-primary align-content-center" *ngFor="let k of _serviceHospedaje.hospedajes | trans; let i = index">
@@ -44,16 +95,19 @@
                     <p class="card-text">Tipo: {{ _serviceHospedaje.hospedajes[k].tipo }}</p>
                     <p class="card-text"><small class="text-muted">Precio: {{ _serviceHospedaje.hospedajes[k].precio }}</small></p>
                     <div class="row">
-                        <div class="col-md-auto">
+                        <div class="col-md-12" *ngIf="sesiona.rol === 'false'">
+                            <button alt="Reservar" (click)="reservar(formaDispo,_serviceHospedaje.hospedajes[k].id)" type="button" class="btn btn-sm btn-success btn-block">
+                            <i class="fas fa-concierge-bell" title="Reservar">&nbsp;Reservar</i></button>
+                        </div>
+                        <div class="col-md-auto" *ngIf="sesiona.rol === 'true'">
                             <button alt="Eliminar" (click)="abrirModalEliminar(_serviceHospedaje.hospedajes[k].id,k,_serviceHospedaje.hospedajes[k].descripcion)" type="button" class="btn btn-sm btn-danger">
-                        <i alt="Eliminar" title="Eliminar" class="fas fa-trash">&nbsp;Eliminar</i></button>&nbsp;
+                            <i alt="Eliminar" title="Eliminar" class="fas fa-trash">&nbsp;Eliminar</i></button>&nbsp;
 
                             <button alt="Editar" (click)="abrirModalHospedaje(_serviceHospedaje.hospedajes[k],k)" type="button" class="btn btn-sm btn-primary">
-                        <i alt="Editar" title="Editar"  class="fas fa-edit">&nbsp;Editar</i></button>&nbsp;
+                            <i alt="Editar" title="Editar"  class="fas fa-edit">&nbsp;Editar</i></button>&nbsp;
 
-
-                            <button alt="Reservar" (click)="abrirModalHospedaje(_serviceHospedaje.hospedajes[k],k)" type="button" class="btn btn-sm btn-success">
-                            <i class="fas fa-concierge-bell" title="Reservar">&nbsp;Reservar</i></button>
+                            <button alt="Reservar" (click)="reservar(formaDispo,_serviceHospedaje.hospedajes[k].id)" type="button" class="btn btn-sm btn-success">
+                                <i class="fas fa-concierge-bell" title="Reservar">&nbsp;Reservar</i></button>
                         </div>
                     </div>
                 </div>
@@ -61,19 +115,19 @@
         </div>
         <div class="col-md-12">
 
-            <button *ngIf="_serviceHospedaje.next_page !== null" (click)="cargarMas()" type="button" class="btn btn-outline-primary btn-block">
-                    Cargar más videos
+            <button *ngIf="(_serviceHospedaje.hospedajes | trans).length !== 0 && _serviceHospedaje.next_page !== null && !_serviceHospedaje.loading" (click)="cargarMas()" type="button" class="btn btn-outline-primary btn-block">
+                    Cargar más Alojamientos
                     </button>
         </div>
     </div>
 </div>
-
-<div *ngIf="(_serviceHospedaje.hospedajes | trans).length === 0 && !_serviceHospedaje.loading && !_serviceHospedaje.error" style="margin-left: 25px; " class="alert col-md-11 alert-info" role="alert">
-    <strong>No hay</strong> hospedajes que mostrar
+<div class="col-md-12 col-sm-12">
+    <div *ngIf="(_serviceHospedaje.hospedajes | trans).length === 0 && !_serviceHospedaje.loading && !_serviceHospedaje.error" style="margin-left: 0px; " class="alert alert-info" role="alert">
+        <strong>No hay</strong> alojamientos disponibles para mostrar, intenta otras fechas
+    </div>
 </div>
 <div class="col-md-12">
-    <div *ngIf="_serviceHospedaje.loading" width="100%" class="alert alert-info" style=" text-align: center;" role="alert">
-        <strong>Cargando...</strong>
+    <div *ngIf="_serviceHospedaje.loading" width="100%" style=" text-align: center;" role="alert">
         <div class="loader loader--style1" title="0">
             <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
                 <path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
@@ -91,13 +145,18 @@
                   </path>
                 </svg>
         </div>
-        <p>Espere por favor</p>
+        <strong>Cargando...</strong>
     </div>
 </div>
 
 
 
-<!-- Modal Eliminar-->
+
+
+
+
+<!--Modales de Hospedajes-->
+<!-- Modal Eliminar Hospedaje-->
 <div class="modal fade" id="ModalEliminar_Hospedaje" role="dialog" data-backdrop="false">
     <div class="modal-dialog" role="document">
 
@@ -117,7 +176,7 @@
     </div>
 </div>
 
-<!-- Modal Hospedaje Editar-->
+<!-- Modal Editar Hospedaje -->
 <div class="modal fade" id="Modal_Hospedaje" role="dialog" data-backdrop="false">
     <div class="modal-dialog" role="document">
 
@@ -217,11 +276,7 @@
 </div>
 
 
-
-
-
-
-<!-- Modal Hospedaje Guardar-->
+<!-- Modal Guardar Hospedaje -->
 <div class="modal fade" id="Modal_Hospedaje_Guardar" role="dialog" data-backdrop="false">
     <div class="modal-dialog" role="document">
 

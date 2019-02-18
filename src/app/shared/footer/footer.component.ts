@@ -7,6 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FooterComponent implements OnInit {
 
+  annio: number = new Date().getFullYear();
+  email = 'josejulianfigueroa@gmail.com';
+
   constructor() { }
 
   ngOnInit() {

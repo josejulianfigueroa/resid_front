@@ -8,22 +8,22 @@ import localeEsAr from '@angular/common/locales/es-AR';
 registerLocaleData(localeEsAr, 'es-Ar');
 
 import { NgSelectModule } from '@ng-select/ng-select';
-import {  NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-// Componentes Cliente Web
+// Componentes para el Bootstrap y Home
+import { NgbModule, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateMomentParserFormatter } from './config/ngb-date-custom-parser-formatter';
+import { HomeComponent } from './shared/home/home.component';
+
+// Componentes Shared
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './shared/header/header.component';
 import { FooterComponent } from './shared/footer/footer.component';
 
+// Componentes Principales
+import { HospedajeComponent } from './hospedaje/hospedaje.component';
+import { ReservacionesComponent, NgbdSortableHeaderDirective } from './reservaciones/reservaciones.component';
 
 // Componenentes del Administrador
-import { AdminComponent } from './admin/admin/admin.component';
-import { HeaderAdminComponent } from './admin/header-admin/header-admin.component';
-import { FooterAdminComponent } from './admin/footer-admin/footer-admin.component';
-import { HospedajesComponent } from './admin/hospedajes/hospedajes.component';
-
-import { HospedajeComponent } from './shared/hospedaje/hospedaje.component';
-import { RegistroComponent } from './shared/registro/registro.component';
 import { ReservarComponent } from './shared/reservar/reservar.component';
 import { SearchReservaComponent } from './admin/search-reserva/search-reserva.component';
 
@@ -68,27 +68,26 @@ import 'hammerjs';
 
 
 
+
 @NgModule({
   declarations: [
+    NgbdSortableHeaderDirective,
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    AdminComponent,
-    HeaderAdminComponent,
-    FooterAdminComponent,
     TransPipe,
-    RegistroComponent,
     ReservarComponent,
     SearchReservaComponent,
     HospedajeComponent,
-    HospedajesComponent,
     DomseguroPipe,
     NoimagePipe,
     LoginComponent,
     RequestResetComponent,
     ResponseResetComponent,
     ProfileComponent,
-    SignupComponent
+    SignupComponent,
+    HomeComponent,
+    ReservacionesComponent
   ],
   imports: [
     BrowserModule,
@@ -107,7 +106,6 @@ import 'hammerjs';
     ReservaServicesService,
     PagosServicesService,
     HospedajeServicesService,
-
     JarwisServiceService,
     TokenServiceService,
     AuthServiceService,
@@ -117,6 +115,10 @@ import 'hammerjs';
 
     { provide: LOCALE_ID, useValue: 'es-Ar' },
     { provide: 'SnotifyToastConfig', useValue: ToastDefaults },
+    {
+      provide: NgbDateParserFormatter,
+      useFactory: () => new NgbDateMomentParserFormatter('DD-MM-YYYY')
+    },
     SnotifyService
   ],
   bootstrap: [AppComponent]

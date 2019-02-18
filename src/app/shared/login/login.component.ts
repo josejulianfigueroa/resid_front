@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+
+// Servicios
 import { JarwisServiceService } from '../../services/jarwis-service.service';
 import { TokenServiceService } from '../../services/token-service.service';
-import { Router } from '@angular/router';
 import { AuthServiceService } from '../../services/auth-service.service';
-import {  SnotifyService } from 'ng-snotify';
 
+// Notificacion
+import {  SnotifyService } from 'ng-snotify';
 
 @Component({
   selector: 'app-login',
@@ -28,25 +30,43 @@ export class LoginComponent implements OnInit {
     private Auth: AuthServiceService,
     private Notify: SnotifyService
   ) {
-    this.Notify.success('Example body content');
+
    }
 
   onSubmit() {
+
     this.Jarwis.login(this.form).subscribe(
       data => this.handleResponse(data),
       error => this.handleError(error)
     );
+
   }
 
   handleResponse(data) {
+
     this.Token.handle(data.access_token);
     this.Auth.changeAuthStatus(true);
-    this.router.navigateByUrl('/reservaciones');
+
+    localStorage.setItem('nombre', data.nombre);
+    localStorage.setItem('rol', data.rol);
+    localStorage.setItem('id', data.id);
+    localStorage.setItem('expires_in', data.expires_in);
+
+    this.Notify.info('Listo!, Ahora puedes continuar', 'Ya Iniciaste', {
+      timeout: 7500,
+      showProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      icon: 'assets/logo/favicon.png'
+    });
+
+    this.router.navigateByUrl('/home');
   }
 
   handleError(error) {
     this.error = error.error.error;
   }
+
   ngOnInit() {
   }
 

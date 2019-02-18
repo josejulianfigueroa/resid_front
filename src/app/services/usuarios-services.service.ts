@@ -47,7 +47,7 @@ export class UsuariosServicesService {
 
    cargar_usuarios() {
 
-         const url = `${ this.url }users`;
+         const url = `${ this.url }users?per_page=100000`;
 
         return this.http.get( url );
    }
