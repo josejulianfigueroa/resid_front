@@ -4,13 +4,15 @@ import { Pagos } from '../interfaces/pagos.interface';
 import { map } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 
+// Configuracion
+import { URL_SERVICIOS } from '../config/config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PagosServicesService {
 
-  url = 'http://127.0.0.1:8000/api/';
+ url = URL_SERVICIOS;
   loading = true;
 
   pagos: Pagos[] = [];
@@ -30,8 +32,6 @@ export class PagosServicesService {
  };
 
    constructor(private http: HttpClient) {
-
-
     }
 // Inicio Metodos para la Base de Datos
 eliminar_pago2(id: number) {
@@ -45,12 +45,10 @@ eliminar_pago2(id: number) {
    eliminar_pagos(id: number, k: number) {
     this.eliminar_pago2( id )
     .subscribe( respuesta => {
-                console.log(respuesta);
                   if ( respuesta ) {
                     delete this.pagos[k];
                     delete this.pagosFiltrado[k];
-                      // console.error(respuesta);
-                      this.alerta = true;
+                    this.alerta = true;
                   }
               });
     }
@@ -73,80 +71,28 @@ eliminar_pago2(id: number) {
                 this.pagos = [];
                 this.pagos = this.pagosFiltrado;
                 this.alerta2 = true;
-
+                this.error = false;
+                }, ( errorServicio) => {
+                  this.error = true;
+                  this.loading = false;
+                  console.log(errorServicio);
+                  this.mensajeError = errorServicio.error.error;
                 });
     }
 
-
-
-
     cargar_pagos(id_reserva: number) {
- /*
-       const headers = new HttpHeaders ({
-         'Authorization': 'Bearer BQBILzfnOzW82FK9Xh7lbrOqvRJn8HkY3qDaiUo9zht_LatzQk-ePuXCQp3rZcFYKEZMia8DPqI_kLQUMYE'
-       });*/
-
-  // return this.http.get(`${ this.url }`);
-       const url = `${ this.url }pagos/${ id_reserva }`;
+      const url = `${ this.url }pagos/${ id_reserva }`;
 
       this.http.get(url)
       .subscribe( (resp: any) => {
         setTimeout( () => {
-
           this.pagos = resp.data;
           this.loading = false;
-        }, 1500);
+        }, 1000);
        }, ( errorServicio) => {
         this.error = true;
         this.loading = false;
-        // console.log(errorServicio.message);
         this.mensajeError = errorServicio.message;
       });
-
     }
-   // Fin Metodos para la Base de Datos
-
-   // Inicio Metodos para los Componentes
-   /*
-    private filtrarReservas( termino: string ) {
-     this.reservacionesFiltrado = [];
-     this.termino = termino.toLocaleLowerCase();
-
-    this.reservaciones.forEach( rese => {
-
-     const nombrelower = rese.es_de_usuario.nombre.toLocaleLowerCase();
-       if (rese.es_de_usuario.nombre.indexOf( this.termino ) >= 0 || nombrelower.indexOf( this.termino ) >= 0) {
-         this.reservacionesFiltrado.push( rese );
-       }
-     });
-   }
-
-   buscarReserva ( termino: string ) {
-     if (this.reservaciones.length === 0) {
-         this.cargar_reservaciones()
-             .subscribe( (resp: any) => {
-               this.reservaciones = resp.data;
-              });
-         this.filtrarReservas( termino );
-       } else {
-         this.filtrarReservas( termino );
-       }
-   }
-
-   eliminar_reserva(id: number, k: number) {
-
-         this.eliminar_reservaciones( id )
-             .subscribe( respuesta => {
-                         console.log(respuesta);
-                           if ( respuesta ) {
-                             delete this.reservaciones[k];
-                             delete this.reservacionesFiltrado[k];
-                               // console.error(respuesta);
-                           }
-                       });
- }
-
-
-   // Fin Metodos para los Componentes
-   */
  }

@@ -1,3 +1,119 @@
-<p>
-  profile works!
-</p>
+<div class="row" style="padding-top: 40px">
+    <div class="col-md-7 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="tamano_letra_grande " style="color: darkgray;">
+                    Editar<small>/Usuario</small>
+                </div>
+            </div>
+            <div class="card-body  m-2">
+                <form [formGroup]="forma" novalidate="novalidate" (ngSubmit)="onSubmit()">
+                    <div class="alert alert-danger alert-dismissable" [hidden]="!error">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> {{error}}
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputName3" class="col-sm-2 col-form-label">Nombre</label>
+                        <div class="col-sm-10">
+                            <input type="text" minlength="3" name="nombre" class="form-control" id="inputname3" formControlName="nombre" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputName53" class="col-sm-2 col-form-label">Apellido</label>
+                        <div class="col-sm-10">
+                            <input type="text" minlength="3" name="apellido" class="form-control" id="inputname3e" formControlName="apellido" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-10">
+                            <input type="email" name="correo" readonly class="form-control" id="inputEmail3" formControlName="correo" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputName5d3" class="col-sm-2 col-form-label">Dirección</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="direccion" class="form-control" id="inputname3sde" formControlName="direccion">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputName5dsdsd3" class="col-sm-2 col-form-label">Teléfono</label>
+                        <div class="col-sm-10">
+                            <input type="text" minlength="7" maxlength="11" name="telefono" class="form-control" id="inputname3ssde" formControlName="telefono" required>
+                        </div>
+                    </div>
+
+                    <!--Validaciones Inicio-->
+                    <!--Nombre-->
+                    <div class="text-danger" *ngIf="forma.get('nombre').errors?.required && !forma.pristine">
+                        Debe Ingresar un nombre
+                    </div>
+                    <div class="text-danger" *ngIf="forma.get('nombre').errors?.minlength && !forma.pristine">
+                        El nombre debe tener mínimo 3 caracteres
+                    </div>
+                    <div class="text-danger" *ngIf="forma.get('nombre').errors?.pattern && !forma.pristine">
+                        El nombre debe tener sólo letras
+                    </div>
+                    <!--Apellido-->
+                    <div class="text-danger" *ngIf="forma.get('apellido').errors?.required && !forma.pristine">
+                        Debe Ingresar un Apellido
+                    </div>
+                    <div class="text-danger" *ngIf="forma.get('apellido').errors?.minlength && !forma.pristine">
+                        El apellido debe tener mínimo 3 caracteres
+                    </div>
+                    <div class="text-danger" *ngIf="forma.get('apellido').errors?.pattern && !forma.pristine">
+                        El apellido debe tener sólo letras
+                    </div>
+                    <!--Telefono-->
+                    <div class="text-danger" *ngIf="forma.get('telefono').errors?.required && !forma.pristine">
+                        Debe Ingresar un teléfono
+                    </div>
+                    <div class="text-danger" *ngIf="forma.get('telefono').errors?.minlength && !forma.pristine">
+                        El teléfono debe tener mínimo 7 caracteres
+                    </div>
+                    <div class="text-danger" *ngIf="forma.get('telefono').errors?.maxlength && !forma.pristine">
+                        El teléfono debe tener máximo 11 caracteres
+                    </div>
+                    <div class="text-danger" *ngIf="forma.get('telefono').errors?.pattern && !forma.pristine">
+                        Debe Ingresar un telefono válido
+                    </div>
+                    <!--Validaciones Fin-->
+
+                    <div class="form-group row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-outline-primary btn-block btn-sm">
+                                <i class="fa fa-save"></i>&nbsp;&nbsp;&nbsp; Guardar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 col-sm-12">
+        <div class="alert alert-danger alert-dismissable" [hidden]="!_usuarioService.error_imagen">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> {{_usuarioService.mensaje_imagen_error}}
+        </div>
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="form-group row has danger">
+                    <div class="col-12">
+                        <img *ngIf="mostrar == false" class="card-img-top " width="100%" height="250px" src="{{ sesiona.imagen | noimage }}">
+                        <img *ngIf="mostrar == true" class="card-img-top" width="100%" height="250px" [src]="url">
+                        <input class="form-control" id="imagen" (change)=changeValue($event) type="file" name="imagen">
+                    </div>
+                </div>
+                <br>
+                <button (click)="cambiarImagen()" type="button" class="btn btn-outline-primary btn-block btn-sm">
+                      <i class="fa fa-save"></i>&nbsp;&nbsp;&nbsp;
+                        Actualizar Foto
+                 </button>
+            </div>
+        </div>
+    </div>
+</div>

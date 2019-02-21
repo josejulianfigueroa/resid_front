@@ -24,17 +24,15 @@ export class RequestResetComponent implements OnInit {
 
 
   onSubmit() {
-   this.Notify.info('Espere...' , {timeout: 5000});
+   this.Notify.info('Enviando...' , {timeout: 5000});
     this.Jarvis.sendPasswordResetLink(this.form).subscribe(
       data => this.handleResponse(data),
-    //  error => this.handleError(error)
       error => this.Notify.error(error.error.error)
     );
   }
 
   handleResponse(res) {
      this.Notify.success(res.data, { timeout: 0 });
-  // console.log(res.data);
     this.form.email = null;
   }
   handleError(error) {

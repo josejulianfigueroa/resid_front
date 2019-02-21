@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,  ViewChild  } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
@@ -15,6 +15,7 @@ import { Reserva } from '../interfaces/reserva_sola.interface';
 
 // Manejando el Calendario
 import {NgbDate, NgbCalendar, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
 
 // JQuery
 declare var $: any;
@@ -43,7 +44,8 @@ import {  SnotifyService } from 'ng-snotify';
   .custom-day.faded {
     background-color: rgba(2, 117, 216, 0.5);
   }
-`]
+`],
+providers: [NgbCarouselConfig]  // add NgbCarouselConfig to the component providers
 })
 export class HospedajeComponent implements OnInit {
 
@@ -52,13 +54,18 @@ public sesiona: Sesion = {
     expires_in : '',
     nombre : '',
     rol : 'false',
-    id : 0
+    id : 0,
+    apellido: '',
+    direccion: '',
+    telefono: '',
+    imagen: '',
+    email: ''
   };
 public loggedIn: boolean;
 
 tipo_hospedaje = [ 'Apartamento' , 'Casa', 'Habitacion' ];
 
-hospedaje: Hospedaje = {
+hospedaje: any = {
   id: null,
   descripcion: null,
   tipo:  null,
@@ -68,7 +75,7 @@ hospedaje: Hospedaje = {
   updated_at: null,
   deleted_at: null,
 };
-hospedaje_guardar: Hospedaje = {
+hospedaje_guardar: any = {
   id: null,
   descripcion: null,
   tipo:  null,
@@ -80,6 +87,17 @@ hospedaje_guardar: Hospedaje = {
 };
 url;
 mostrar = false;
+url0;
+mostrar0 = false;
+url1;
+mostrar1 = false;
+url2;
+mostrar3 = false;
+
+image;
+image0;
+image1;
+image2;
 
   mostrar2: false;
   nombre: string ;
@@ -90,6 +108,9 @@ parametros: any = {fecha1: null,
                    fecha2: null
                    };
   selectedFile: File = null;
+  selectedFile0: File = null;
+  selectedFile1: File = null;
+  selectedFile2: File = null;
 
   hoveredDate: NgbDate;
 
@@ -117,20 +138,9 @@ parametros: any = {fecha1: null,
       fechainicio: null,
       fechasalida: null,
       user_id: null,
-    //  fechareserva: null,
       hospedaje_id: null,
-    //  status: null,
-    //  created_at: null,
-     // updated_at: null,
-     // deleted_at: null
   };
-  /*
-  reserva: Object = {
-    fechainicio: null,
-    fechasalida: null,
-    user_id: null,
-    hospedaje_id: null,
-  };*/
+
   resp1: Hospedaje[] = [];
   resp2: Usuario[] = [];
   str1: string;
@@ -148,6 +158,10 @@ parametros: any = {fecha1: null,
 date_inicio: NgbDateStruct;
 date_fin: NgbDateStruct;
 
+showNavigationArrows = false;
+showNavigationIndicators = false;
+
+@ViewChild('carousel2') carousel: any;
 
   constructor(public _serviceHospedaje: HospedajeServicesService,
               public activatedRoute: ActivatedRoute,
@@ -155,10 +169,23 @@ date_fin: NgbDateStruct;
               private Auth: AuthServiceService,
               calendar: NgbCalendar,
               private Notify: SnotifyService,
-              private router: Router) {
+              private router: Router,
+              config: NgbCarouselConfig) {
 
+
+ // Configuracion del Carrosel Inicio
+ config.interval = 12000;
+ config.wrap = true;
+ config.keyboard = false;
+ config.pauseOnHover = false;
+ config.showNavigationArrows = true;
+ config.showNavigationIndicators = true;
+ // Configuracion del Carrosel Fin
+
+
+// Inicializando variables
+this._serviceReserva.alerta2 = false;
 // Obteniendo los parametros de consulta de hospedajes
-
 activatedRoute.params
               .subscribe( params => {
                   const termino = params['termino'];
@@ -235,18 +262,6 @@ this.fechas.fecha2 = date2;
 this.date_inicio = calendar.getToday();
 this.date_fin = calendar.getNext(calendar.getToday(), 'd', 90);
 
-/*
-    this._serviceReserva.cargar_hospedajes()
-                        .subscribe( (resp: any) => {
-                                console.log(resp.data);
-                                this.resp1 = resp.data;
-                          });
-   this._serviceUsuario.cargar_usuarios()
-                          .subscribe( (resp: any) => {
-                                  console.log(resp.data);
-                                  this.resp2 = resp.data;
-                            });
-*/
       }
 
 // Reservar Hospedaje en las fechas ingresadas
@@ -354,29 +369,44 @@ this._serviceHospedaje.cargar_hospedajes_fechas( termino );
       }
 
       guardar_hospedaje( forma: NgForm) {
-        console.log(this.selectedFile);
-        // if (this.selectedFile !== null) {
+
          const uploadData2 = new FormData();
          if (this.selectedFile === null) {} else {
           uploadData2.append('image', this.selectedFile, this.selectedFile.name);
          }
+         if (this.selectedFile0 === null) {} else {
+          uploadData2.append('image0', this.selectedFile0, this.selectedFile0.name);
+         }
+         if (this.selectedFile1 === null) {} else {
+          uploadData2.append('image1', this.selectedFile1, this.selectedFile1.name);
+         }
+         if (this.selectedFile2 === null) {} else {
+          uploadData2.append('image2', this.selectedFile2, this.selectedFile2.name);
+         }
         uploadData2.append('descripcion', this.hospedaje_guardar.descripcion);
         uploadData2.append('tipo', this.hospedaje_guardar.tipo);
         uploadData2.append('precio', String(this.hospedaje_guardar.precio));
-         console.log(this.hospedaje_guardar.descripcion);
+
          this._serviceHospedaje.guardar_hospedaje( uploadData2 );
  }
 
 
       actualizar_hospedaje( forma: NgForm) {
 
-       console.log(this.selectedFile);
-      // if (this.selectedFile !== null) {
        const uploadData = new FormData();
+
        if (this.selectedFile === null) {} else {
         uploadData.append('image', this.selectedFile, this.selectedFile.name);
        }
-
+       if (this.selectedFile0 === null) {} else {
+        uploadData.append('image0', this.selectedFile0, this.selectedFile0.name);
+       }
+       if (this.selectedFile1 === null) {} else {
+        uploadData.append('image1', this.selectedFile1, this.selectedFile1.name);
+       }
+       if (this.selectedFile2 === null) {} else {
+        uploadData.append('image2', this.selectedFile2, this.selectedFile2.name);
+       }
       uploadData.append('descripcion', this.hospedaje.descripcion);
       uploadData.append('tipo', this.hospedaje.tipo);
       uploadData.append('precio', String(this.hospedaje.precio));
@@ -389,11 +419,46 @@ this._serviceHospedaje.cargar_hospedajes_fechas( termino );
         this.mostrar = true;
         this.selectedFile = $event.target.files[0];
 
-
         if ($event.target.files && $event.target.files[0]) {
             const reader = new FileReader();
             reader.onload = ( event2: any) => {
             this.url = event2.target.result;
+        };
+            reader.readAsDataURL($event.target.files[0]);
+        }
+      }
+      changeValue0($event: any) {
+        this.mostrar0 = true;
+        this.selectedFile0 = $event.target.files[0];
+
+        if ($event.target.files && $event.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = ( event2: any) => {
+            this.url0 = event2.target.result;
+        };
+            reader.readAsDataURL($event.target.files[0]);
+        }
+      }
+      changeValue1($event: any) {
+        this.mostrar1 = true;
+        this.selectedFile1 = $event.target.files[0];
+
+        if ($event.target.files && $event.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = ( event2: any) => {
+            this.url1 = event2.target.result;
+        };
+            reader.readAsDataURL($event.target.files[0]);
+        }
+      }
+      changeValue2($event: any) {
+        this.mostrar3 = true;
+        this.selectedFile2 = $event.target.files[0];
+
+        if ($event.target.files && $event.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = ( event2: any) => {
+            this.url2 = event2.target.result;
         };
             reader.readAsDataURL($event.target.files[0]);
         }
@@ -403,6 +468,22 @@ this._serviceHospedaje.cargar_hospedajes_fechas( termino );
 
 
 // Modales sobre Hospedaje
+
+// Modal Abrir Galeria Hospedaje
+abrirModalGaleria(  image: string, image0: string, image1: string, image2: string ) {
+
+  this.image = image;
+  this.image0 = image0;
+  this.image1 = image1;
+  this.image2 = image2;
+   $('#ModalGaleria_Hospedaje').modal();
+ }
+// Modal Cerrar Galeria Hospedaje
+ cerrarModalGaleria( valor: string  ) {
+   $('#ModalGaleria_Hospedaje').modal('hide');
+ }
+
+
 // Modal Abrir Eliminar Hospedaje
 abrirModalEliminar( id: number, k: number, nombre: string  ) {
   this.nombre = nombre;
@@ -417,6 +498,8 @@ abrirModalEliminar( id: number, k: number, nombre: string  ) {
   }
    $('#ModalEliminar_Hospedaje').modal('hide');
  }
+
+
   // Modal Abrir Editar Hospedaje
   abrirModalHospedaje( hospedaje: Hospedaje , k: number ) {
     this.hospedaje = hospedaje;
@@ -455,6 +538,25 @@ abrirModalEliminar( id: number, k: number, nombre: string  ) {
        this.sesiona.rol = localStorage.getItem('rol');
        this.sesiona.id = Number(localStorage.getItem('id'));
        this.sesiona.expires_in = localStorage.getItem('expires_in');
+
+      this.sesiona.apellido = localStorage.getItem('apellido');
+      this.sesiona.direccion = localStorage.getItem('direccion');
+      this.sesiona.telefono = localStorage.getItem('telefono');
+      this.sesiona.imagen = localStorage.getItem('imagen');
+      this.sesiona.email = localStorage.getItem('email');
+
+      if (this.sesiona.imagen === 'undefined' || this.sesiona.imagen === 'null') {
+        this.sesiona.imagen = null;
+      }
+      if (this.sesiona.direccion === 'undefined' || this.sesiona.direccion === 'null') {
+        this.sesiona.direccion = '';
+      }
+      if (this.sesiona.apellido === 'undefined' || this.sesiona.apellido === 'null') {
+        this.sesiona.apellido = '';
+      }
+      if (this.sesiona.telefono === 'undefined' || this.sesiona.telefono === 'null') {
+        this.sesiona.telefono = '';
+      }
      }
 
   }

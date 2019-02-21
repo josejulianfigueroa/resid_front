@@ -65,13 +65,13 @@ export class HospedajeServicesService {
                     .pipe(map(res => res));
   }
   cargar_hospedajes() {
-     const url = `${ this.url }hospedajes`;
+     const url = `${ this.url }hospedajes?per_page=1000`;
      return this.http.get( url );
        }
 
   cargar_hospedajes_fechas( parametros: string) {
 
-        const url = `${ this.url }hospedaje_fecha?per_page=2&${ parametros }`;
+        const url = `${ this.url }hospedaje_fecha?per_page=3&${ parametros }`;
 
         return this.http.get( url ).subscribe( (resp: any) => {
           setTimeout( () => {
@@ -122,24 +122,21 @@ export class HospedajeServicesService {
      }, ( errorServicio) => {
       this.error = 'carga';
       this.loading = false;
-      console.log(errorServicio.message);
       this.mensajeError = errorServicio.message;
     });
           }
 
        guardar_hospedaje( uploadData: any ) {
         const url = `${ this.url }hospedajes`;
-        console.log(uploadData);
+
         return this.http.post(url, uploadData)
                   .subscribe( (resp: any) => {
+                   this.alerta = 'guardar';
 
-                  this.alerta = 'guardar';
                    this.hospedajes.push(resp.data);
 
                   }, ( errorServicio) => {
-                   // console.log(errorServicio);
                     this.error = 'guardar';
-                    // this.mensajeError = errorServicio.message;
                     this.mensajeError = errorServicio.error.error;
                   });
       }
@@ -194,7 +191,6 @@ export class HospedajeServicesService {
 
       return this.http.post(url, uploadData)
                 .subscribe( (resp: any) => {
-                  console.log(resp);
                   this.alerta = 'actualizar';
                   delete this.hospedajes[k];
                    delete this.hospedajesFiltrado[k];

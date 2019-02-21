@@ -29,6 +29,11 @@ export class TokenServiceService {
     localStorage.removeItem('rol');
     localStorage.removeItem('expires_in');
     localStorage.removeItem('id');
+    localStorage.removeItem('email');
+    localStorage.removeItem('apellido');
+    localStorage.removeItem('direccion');
+    localStorage.removeItem('telefono');
+    localStorage.removeItem('imagen');
   }
 
   isValid() {

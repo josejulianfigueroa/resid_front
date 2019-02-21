@@ -9,14 +9,14 @@ import {  SnotifyService } from 'ng-snotify';
   styleUrls: ['./response-reset.component.css']
 })
 export class ResponseResetComponent implements OnInit {
-   public error = [];
- // public error = null;
+
+  public error = null;
 
   public form = {
-    email : null,
-    password : null,
-    password_confirmation: null,
-    resetToken : null };
+    email : '',
+    password : '',
+    password_confirmation: '',
+    resetToken : '' };
 
   constructor(
     private route: ActivatedRoute,
@@ -26,32 +26,45 @@ export class ResponseResetComponent implements OnInit {
   ) {
     route.queryParams.subscribe(params => {
       this.form.resetToken = params['token'];
+      this.form.email = params['email'];
     });
+
   }
 
   onSubmit() {
+    this.Notify.info('Enviando...' , {timeout: 5000});
    this.Jarwis.changePassword(this.form).subscribe(
      data => this.handleResponse(data),
      error => this.handleError(error)
    );
   }
   handleResponse(data) {
-console.log(data);
+
 this.form.email = null;
 this.form.password = null;
-    let _router = this.router;
+    const _router = this.router;
 
-    this.Notify.confirm('Done!, Now login with new Password', {
+    this.Notify.success('Password actualizado', 'Hecho!', {
+      timeout: 4500,
+      showProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      icon: 'assets/logo/favicon.png'
+    });
+    _router.navigateByUrl('/login');
+
+
+    /*
+    this.Notify.confirm('Hecho!, Ahora Inicia Sesión', {
       buttons: [
-        {text: 'Okay',
+        {text: 'Ok',
         action: toster => {
            _router.navigateByUrl('/login'),
            this.Notify.remove(toster.id);
           }
       },
       ]
-    });
-
+    });*/
   }
 
   handleError(error) {

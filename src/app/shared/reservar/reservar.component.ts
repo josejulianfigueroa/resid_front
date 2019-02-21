@@ -4,6 +4,7 @@ import { NgForm } from '@angular/forms';
 // Servicios
 import { ReservaServicesService } from '../../services/reserva-services.service';
 import { UsuariosServicesService } from '../../services/usuarios-services.service';
+import { HospedajeServicesService } from '../../services/hospedaje-services.service';
 
 // Interfaces
 import { Hospedaje } from '../../interfaces/hospedajes.interface';
@@ -11,6 +12,9 @@ import { Usuario } from '../../interfaces/usuario.interface';
 import { Reserva } from '../../interfaces/reserva_sola.interface';
 
 import {NgbDate, NgbCalendar} from '@ng-bootstrap/ng-bootstrap';
+
+// Notificacion
+import {  SnotifyService } from 'ng-snotify';
 
 declare var $: any;
 
@@ -88,20 +92,24 @@ export class ReservarComponent {
   mes2;
   dia2;
   constructor(public _serviceReserva: ReservaServicesService,
+              public _serviceHospedaje: HospedajeServicesService,
               private _serviceUsuario: UsuariosServicesService,
-              calendar: NgbCalendar) {
+              calendar: NgbCalendar,
+              private Notify: SnotifyService) {
+
+// Inicializando Variables
+this._serviceReserva.alerta2 = false;
+this._serviceReserva.error2 = false;
 
                 this.fromDate = calendar.getToday();
                 this.toDate = calendar.getNext(calendar.getToday(), 'd', 5);
 
-    this._serviceReserva.cargar_hospedajes()
+    this._serviceHospedaje.cargar_hospedajes()
                         .subscribe( (resp: any) => {
-                                console.log(resp.data);
                                 this.resp1 = resp.data;
                           });
    this._serviceUsuario.cargar_usuarios()
                           .subscribe( (resp: any) => {
-                                  console.log(resp.data);
                                   this.resp2 = resp.data;
                             });
 
@@ -132,8 +140,9 @@ export class ReservarComponent {
 
 
   reservar( forma: NgForm) {
+    this.Notify.info('Enviando datos...' , {timeout: 5000});
 
-    console.log(forma.value.id_usuario );
+   // console.log(forma.value.id_usuario );
    //  console.log('Name:' + userForm.controls['name'].value);
       this.reserva.user_id = forma.value.id_usuario;
 

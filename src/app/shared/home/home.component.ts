@@ -119,6 +119,7 @@ export class HomeComponent implements OnInit {
  config.showNavigationArrows = true;
  config.showNavigationIndicators = true;
  // Configuracion del Carrosel Fin
+
  // Llamada a la Carga de Imagenes Inicio
  this.fechas.fecha1 = calendar.getToday();
  this.date_inicio = calendar.getToday();
@@ -139,18 +140,6 @@ export class HomeComponent implements OnInit {
  }, 4000 );
 // Llamada a la Carga de Imagenes Fin
 
-/*    this._serviceReserva.cargar_hospedajes()
-                        .subscribe( (resp: any) => {
-                                console.log(resp.data);
-                                this.resp1 = resp.data;
-                          });
-   this._serviceUsuario.cargar_usuarios()
-                          .subscribe( (resp: any) => {
-                                  console.log(resp.data);
-                                  this.resp2 = resp.data;
-                            });
-*/
-
   }
 
   // Carga de Imagenes en Vista Home Inicio
@@ -159,11 +148,7 @@ export class HomeComponent implements OnInit {
     return new Promise( (resolve, reject) => {
 
     setInterval( () => {
-
-     // if ( this.images !== null ) {
         resolve( true );
-     //  }
-
     }, 1500 );
 
   });

@@ -45,16 +45,24 @@ httpOptions = {
 
    // Carga de Reservaciones Principal
    cargar_reservaciones(status: string , user_id: number) {
-      const url = `${ this.url }users/reservaciones?per_page=100&user_id=${user_id}&status=${status}`;
+      const url = `${ this.url }usersyreservaciones?per_page=100&user_id=${user_id}&status=${status}`;
 
       return this.http.post(url, this.status)
        .subscribe( (resp: any) => {
         setTimeout( () => {
-          this.reservaciones = resp.data;
-          this.reservaciones = this.reservaciones.filter(x => x.es_de_usuario !== null);
-           // Paginacion
-          this.collectionSize = this.reservaciones.length;
-          // Paginacion
+          if (resp === null) {
+            this.reservaciones = [];
+            // Paginacion
+            this.collectionSize = '1';
+            // Paginacion
+          } else {
+            this.reservaciones = resp.data;
+            this.reservaciones = this.reservaciones.filter(x => x.es_de_usuario !== null);
+             // Paginacion
+            this.collectionSize = this.reservaciones.length;
+            // Paginacion
+          }
+
           this.loading = false;
         }, 1000);
 
@@ -75,8 +83,9 @@ httpOptions = {
               this.error2 = false;
               this.reservaciones.push(resp.data);
               this.router.navigateByUrl('/reservaciones');
-              this.Notify.info('Ya Reservaste un Alojamiento, Te esperamos!', 'Hecho', {
-                timeout: 7500,
+
+              this.Notify.info('Ya Reservaste un Alojamiento, Te esperamos!, Revisa la bandeja de entrada de tu email', 'Hecho', {
+                timeout: 8500,
                 showProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -109,7 +118,7 @@ httpOptions = {
 
   // Cargar Reservaciones Modo Busqueda
   cargar_reservaciones2(status: string , user_id: number) {
-    const url = `${ this.url }users/reservaciones?per_page=100&user_id=${user_id}&status=${status}`;
+    const url = `${ this.url }usersyreservaciones?per_page=100&user_id=${user_id}&status=${status}`;
 
     return this.http.post(url, this.status);
 

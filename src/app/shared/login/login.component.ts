@@ -48,6 +48,11 @@ export class LoginComponent implements OnInit {
     this.Auth.changeAuthStatus(true);
 
     localStorage.setItem('nombre', data.nombre);
+    localStorage.setItem('email', data.email);
+    localStorage.setItem('apellido', data.apellido);
+    localStorage.setItem('direccion', data.direccion);
+    localStorage.setItem('telefono', data.telefono);
+    localStorage.setItem('imagen', data.imagen);
     localStorage.setItem('rol', data.rol);
     localStorage.setItem('id', data.id);
     localStorage.setItem('expires_in', data.expires_in);

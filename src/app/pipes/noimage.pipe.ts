@@ -1,16 +1,19 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+// Configuracion
+import { URL_IMG } from '../config/config';
+
 @Pipe({
   name: 'noimage'
 })
 export class NoimagePipe implements PipeTransform {
 
-  url = 'http://127.0.0.1:8000/img/';
+  url = URL_IMG ;
 
   transform( images: any, edit: boolean = false): string {
 
     if ( edit ) {
-        return 'assets/img/noimage.png'; 
+        return 'assets/img/noimage.png';
     }
 
     if ( !images ) {

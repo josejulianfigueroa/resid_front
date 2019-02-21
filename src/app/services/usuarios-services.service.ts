@@ -1,19 +1,26 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { map } from 'rxjs/operators';
+// Notificacion
+import {  SnotifyService } from 'ng-snotify';
 
 // Interfaces
 import { Reservacion } from '../interfaces/reservacion.interface';
 import { Usuario } from '../interfaces/usuario.interface';
+import { BehaviorSubject } from 'rxjs';
 
+// Configuracion
+import { URL_SERVICIOS } from '../config/config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuariosServicesService {
 
-  url = 'http://127.0.0.1:8000/api/';
+  private imagen_usuario = new BehaviorSubject<string>(null);
+  Obs_imagen_usuario = this.imagen_usuario.asObservable();
+
+  url = URL_SERVICIOS;
   status = 'Por Confirmar';
   loading = true;
 
@@ -24,6 +31,9 @@ export class UsuariosServicesService {
   termino;
   mensajeError = '';
   error = false;
+  error_imagen = false;
+  mensaje_imagen_error = '';
+
 
    httpOptions2 = {
    headers: new HttpHeaders({
@@ -32,79 +42,40 @@ export class UsuariosServicesService {
    })
  };
 
-   constructor(private http: HttpClient) {
-         this.cargar_usuarios();
-
+   constructor(private http: HttpClient,
+              private Notify: SnotifyService) {
     }
-
-    // Inicio Metodos para la Base de Datos
-    eliminar_reservaciones(id: number) {
-         const url = `${ this.url }reservaciones/${id}`;
-
-        return this.http.delete( url )
-                         .pipe(map(res => res));
-    }
-
    cargar_usuarios() {
-
-         const url = `${ this.url }users?per_page=100000`;
-
+        const url = `${ this.url }users?per_page=100000`;
         return this.http.get( url );
    }
 
-    cargar_reservaciones() {
- /*
-       const headers = new HttpHeaders ({
-         'Authorization': 'Bearer BQBILzfnOzW82FK9Xh7lbrOqvRJn8HkY3qDaiUo9zht_LatzQk-ePuXCQp3rZcFYKEZMia8DPqI_kLQUMYE'
-       });*/
+   editar_usuario(data: any, id: number) {
+    return this.http.put(`${this.url}users/${id}`, data);
+  }
 
-   // return this.http.get(`${ this.url }`);
-       const url = `${ this.url }users/reservaciones`;
-       return this.http.post(url, this.status);
+  actualizar_imagen_usuario(id: any, uploadData: any) {
+    const url = `${ this.url }users/${ id }`;
 
-   }
-   // Fin Metodos para la Base de Datos
+    return this.http.post(url, uploadData)
+        .subscribe( (resp: any) => {
 
+        localStorage.setItem('imagen', resp.data.imagen);
 
+        this.imagen_usuario.next(resp.data.imagen);
 
-   // Inicio Metodos para los Componentes
-    private filtrarReservas( termino: string ) {
-     this.reservacionesFiltrado = [];
-     this.termino = termino.toLocaleLowerCase();
+        this.Notify.info('Listo!, Tu foto ha sido actualizada', 'Actualizado', {
+        timeout: 7500,
+        showProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        icon: 'assets/logo/favicon.png'
+      });
 
-    this.reservaciones.forEach( rese => {
+  }, ( errorServicio) => {
+    this.mensaje_imagen_error = errorServicio.error.error;
+  });
 
-     const nombrelower = rese.es_de_usuario.nombre.toLocaleLowerCase();
-       if (rese.es_de_usuario.nombre.indexOf( this.termino ) >= 0 || nombrelower.indexOf( this.termino ) >= 0) {
-         this.reservacionesFiltrado.push( rese );
-       }
-     });
-   }
- 
-  buscarReserva ( termino: string ) {
-     if (this.reservaciones.length === 0) {
-         this.cargar_reservaciones()
-             .subscribe( (resp: any) => {
-               this.reservaciones = resp.data;
-              });
-         this.filtrarReservas( termino );
-       } else {
-         this.filtrarReservas( termino );
-       }
-   }
+  }
 
-   eliminar_reserva(id: number, k: number) {
-
-         this.eliminar_reservaciones( id )
-             .subscribe( respuesta => {
-                         console.log(respuesta);
-                           if ( respuesta ) {
-                             delete this.reservaciones[k];
-                             delete this.reservacionesFiltrado[k];
-                               // console.error(respuesta);
-                           }
-                       });
- }
-
-   // Fin Metodos para los Componentes
  }

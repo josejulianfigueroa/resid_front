@@ -14,7 +14,6 @@ import {ReservacionesComponent } from './reservaciones/reservaciones.component';
  import { ReservarComponent } from './shared/reservar/reservar.component';
  import { SearchReservaComponent } from './admin/search-reserva/search-reserva.component';
 
-
 // Componenetes Login
 
 import { LoginComponent } from './shared/login/login.component';

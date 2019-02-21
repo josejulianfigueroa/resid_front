@@ -4,4 +4,9 @@ export interface Sesion {
     nombre: string;
     rol: string;
     id: number;
+    apellido: string;
+    direccion: string;
+    telefono: string;
+    imagen: string;
+    email: string;
 }

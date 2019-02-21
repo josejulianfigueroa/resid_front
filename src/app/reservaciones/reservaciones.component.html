@@ -15,53 +15,55 @@
         </p>
     </div>
     <!--<i class="fas fa-search ">  </i>-->
-    <div class="col-md-5 col-sm-12 " style="padding-left: 0px; padding-top: 4px;">
-        <input class="form-control form-control-sm " (keyup)="buscarReserva( txtBuscar.value ) " #txtBuscar type="search " placeholder="Buscar Reserva ">
+    <div class="col-md-5 col-sm-12 " *ngIf="sesiona.rol==='true'" style="padding-left: 0px; padding-top: 4px;">
+        <input class="form-control form-control-sm " (keyup)="buscarReserva( txtBuscar.value ) " #txtBuscar type="search " placeholder="Buscar Reserva por Cliente">
     </div>
     <div class="col-md-3 col-sm-12 " style="padding-top: 4px;" *ngIf="sesiona.rol==='true' ">
-        <button [routerLink]="[ '/reservar'] " class="btn btn-sm btn-primary btn-block ">                                                  
-            Crear Reserva
+        <button [routerLink]="['/reservar'] " class="btn btn-outline-primary btn-block btn-sm ">                                                  
+            <i class="fas fa-concierge-bell"></i>&nbsp;&nbsp;&nbsp;Crear Reserva
         </button>
     </div>
 </div>
 
 <hr>
 <div class="row animated fadeIn fast ">
-    <!--<form>
-        <div class="form-group form-inline ">
-            Buscar: <input class="form-control ml-2 " type="text " [formControl]="filter " />
-        </div>
-    </form>-->
     <div class="col-md-1 "></div>
     <div class="col-md-10 ">
-        <table class="table table-striped table-responsive table-hover puntero " *ngIf="!_serviceReserva.loading && !_serviceReserva.error && _serviceReserva.reservaciones.length !=0 ">
-            <thead class="thead-light ">
+        <table class="table table-striped table-responsive table-hover puntero" *ngIf="!_serviceReserva.loading && !_serviceReserva.error && _serviceReserva.reservaciones.length !=0 ">
+            <thead class="thead-light">
                 <tr class="tamano_letra_peque ">
-                    <th class="text-center " sortable="id " (sort)="onSort($event) ">Id</th>
-                    <th class="text-center " sortable="nombre " (sort)="onSort($event) ">Nombre</th>
-                    <th class="text-center " sortable=" hospedaje " (sort)="onSort($event) ">Hospedaje</th>
-                    <th class="text-center " sortable="fechainicio " (sort)="onSort($event) ">Entrada</th>
-                    <th class="text-center " sortable="fechasalida " (sort)="onSort($event) ">Salida</th>
-                    <th class="text-center " sortable="fechareserva " (sort)="onSort($event) ">Reserva</th>
-                    <th class="text-center " sortable="status " (sort)="onSort($event) ">Status</th>
+                    <th class="text-center ">Imagen</th>
+                    <th class="text-center " sortable="nombre" (sort)="onSort($event) ">Nombre</th>
+                    <th class="text-center " sortable="hospedaje " (sort)="onSort($event) ">Hospedaje</th>
+                    <th class="text-center" width="100px;" sortable="fechainicio " (sort)="onSort($event) ">Entrada</th>
+                    <th class="text-center" width="100px;" sortable="fechasalida " (sort)="onSort($event) ">Salida</th>
+                    <th class="text-center" width="100px;" sortable="fechareserva " (sort)="onSort($event) ">Reserva</th>
+                    <th class="text-center " sortable="status" (sort)="onSort($event) ">Status</th>
+                    <th class="text-center " sortable="precio" (sort)="onSort($event) ">Total</th>
                     <th *ngIf="sesiona.rol === 'true'" class="text-center " width="70px">Eliminar</th>
-                    <th *ngIf="sesiona.rol === 'true'" class="text-center " width="70px">Pagos</th>
+                    <th class="text-center " width="70px">Pagos</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="tamano_letra_peque " *ngFor="let k of _serviceReserva.reservaciones | trans | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i=index ">
-                    <td class="text-center ">{{ _serviceReserva.reservaciones[k].id }}</td>
+                    <td class="text-center "> <img width="60px;" height="60px;" [src]="_serviceReserva.reservaciones[k].hospedaje.image | noimage"></td>
                     <td class="text-center ">{{ _serviceReserva.reservaciones[k].es_de_usuario.nombre }}</td>
                     <td class="text-center ">{{ _serviceReserva.reservaciones[k].hospedaje.descripcion }}</td>
                     <td class="text-center ">{{ _serviceReserva.reservaciones[k].fechainicio | date:'dd-MM-yyyy' }}</td>
                     <td class="text-center ">{{ _serviceReserva.reservaciones[k].fechasalida | date:'dd-MM-yyyy' }}</td>
                     <td class="text-center ">{{ _serviceReserva.reservaciones[k].fechareserva | date:'dd-MM-yyyy' }}</td>
-                    <td class="text-center ">{{ _serviceReserva.reservaciones[k].status }}</td>
+                    <td class="text-center ">
+                        <span *ngIf="_serviceReserva.reservaciones[k].status === 'Por Confirmar'" class="badge badge-warning">{{ _serviceReserva.reservaciones[k].status }}</span>
+                        <span *ngIf="_serviceReserva.reservaciones[k].status === 'Confirmada'" class="badge badge-success">{{ _serviceReserva.reservaciones[k].status }}</span>
+                        <span *ngIf="_serviceReserva.reservaciones[k].status === 'Cancelada'" class="badge badge-danger">{{ _serviceReserva.reservaciones[k].status }}</span>
+                        <span *ngIf="_serviceReserva.reservaciones[k].status === 'Pagada'" class="badge badge-primary">{{ _serviceReserva.reservaciones[k].status }}</span>
+                    </td>
+                    <td class="text-center ">Bs. {{ ( (_serviceReserva.reservaciones[k].hospedaje.precio * _serviceReserva.reservaciones[k].dias) | number:'.0-0').replace(',','.') }}</td>
                     <td *ngIf="sesiona.rol === 'true'" class="text-center ">
                         <button (click)="abrirModalEliminar(_serviceReserva.reservaciones[k].id,k,_serviceReserva.reservaciones[k].es_de_usuario.nombre) " type="button " class="btn btn-sm btn-danger btn-block ">           
                                <i class="fas fa-trash "></i>
                         </button></td>
-                    <td *ngIf="sesiona.rol === 'true'" class="text-center ">
+                    <td class="text-center ">
                         <button alt="ver " (click)="abrirModalPagos(_serviceReserva.reservaciones[k].id) " type="button " class="btn btn-sm btn-primary btn-block ">
                                 <i class="fas fa-dollar-sign "></i>
                         </button>
@@ -70,16 +72,17 @@
             </tbody>
         </table>
         <div class="row">
-            <div *ngIf="!_serviceReserva.loading && !_serviceReserva.error && _serviceReserva.reservaciones.length !=0 " class="col-md-6 col-sm-12">
+            <div *ngIf="!_serviceReserva.loading && !_serviceReserva.error && _serviceReserva.reservaciones.length !=0 " class="col-md-7 col-sm-12">
                 <ngb-pagination [collectionSize]="_serviceReserva.collectionSize " [(page)]="page " [pageSize]="pageSize " [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"> </ngb-pagination>
             </div>
-            <div style="padding-right: 0px;" *ngIf="!_serviceReserva.loading && !_serviceReserva.error && _serviceReserva.reservaciones.length !=0 " class="col-md-6 col-sm-12">
+            <div style="padding-right: 0px;" *ngIf="!_serviceReserva.loading && !_serviceReserva.error && _serviceReserva.reservaciones.length !=0 " class="col-md-4 col-sm-12">
                 <select class="custom-select " style="width: auto " [(ngModel)]="pageSize ">
                 <option [ngValue]="1 ">1 por Página</option>
                 <option [ngValue]="4 ">4 por Página</option>
                 <option [ngValue]="6 ">6 por Página</option>
               </select>
             </div>
+            <div class="col-md-1 col-sm-12"></div>
         </div>
     </div>
     <div class="col-md-1 "></div>
@@ -108,17 +111,14 @@
             <strong>Cargando...</strong>
         </div>
     </div>
-    <div *ngIf="_serviceReserva.error " class="alert alert-danger animated fadeIn " style="margin-left: 25px; text-align: center; " role="alert ">
+    <div *ngIf="_serviceReserva.error" class="alert alert-danger animated fadeIn " style="margin-left: 25px; text-align: center; " role="alert ">
         <h4 class="alert-heading ">Error</h4>
         <p>{{ _serviceReserva.mensajeError}}</p>
         <p class="mb-0 "></p>
     </div>
 
-
-
-
     <!-- Modal Eliminar-->
-    <div class="modal fade " id="ModalEliminar1" role="dialog " data-backdrop="false ">
+    <div class="modal fade" style="padding-top: 80px;" id="ModalEliminar1" role="dialog " data-backdrop="false ">
         <div class="modal-dialog " role="document ">
             <div class="modal-content ">
                 <div class="modal-header ">
@@ -136,7 +136,7 @@
     </div>
 
     <!-- Modal Pagos-->
-    <div class="modal fade " id="ModalPagos1" role="dialog " data-backdrop="false ">
+    <div class="modal fade" style="padding-top: 80px;" id="ModalPagos1" role="dialog " data-backdrop="false">
         <div class="modal-dialog " role="document ">
 
             <div class="modal-content ">
@@ -144,18 +144,19 @@
                     <h5 class="modal-title " id="exampleModalLabel ">Pagos de la Reservación Id: {{ id }}</h5>
                 </div>
                 <div class="modal-body ">
-                    <div *ngIf="mostrar ">
+                    <div *ngIf="mostrar">
                         <p class="tamano_letra_grande " style="color: darkgray; ">
                             Formulario<small>/Registro de Pago</small>
                         </p>
                         <hr>
                         <form (ngSubmit)="guardar_pago(forma_pago)" #forma_pago="ngForm" novalidate=" ">
-                            <input [(ngModel)]="pago.reservacion_id " #reservacion_id="ngModel" type="hidden " name="reservacion_id ">
+                            <input [(ngModel)]="pago.reservacion_id " #reservacion_id="ngModel" type="hidden" name="reservacion_id ">
 
                             <div class="form-group row has danger ">
                                 <label class="col-2 col-form-label ">Monto:</label>
+                                <input class="form-control" [(ngModel)]="pago.monto" #monto="ngModel" type="text" placeholder="Monto... " name="monto" required minlength="2">
                                 <div class="col-8 ">
-                                    <input class="form-control " [(ngModel)]="pago.monto " #monto="ngModel" type="text " placeholder="Monto... " name="monto " required minlength="2 ">
+
                                     <div *ngIf="monto.errors?.required " class="form-control-feedback ">
                                         El campo es requerido
                                     </div>
@@ -164,69 +165,77 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!--[disabled]="!forma.valid " -->
                             <div class="form-group row ">
-                                <label class="col-2 col-form-label ">&nbsp;</label>
-                                <div class="input-group col-md-8 ">
+                                <div class="input-group col-md-12">
                                     <button [disabled]="!forma_pago.valid " type="submit " class="btn btn-outline-primary ">
-                                    Guardar
+                                            <i class="fa fa-save"></i>&nbsp;&nbsp;&nbsp;Guardar
                                   </button>
                                 </div>
                             </div>
-
                         </form>
                     </div>
-
-                    <button (click)="mostrar=! mostrar" type="button " class="btn btn-sm btn-primary btn-block ">                                                  
+                    <div class="col-md-12 col-sm-12" *ngIf="sesiona.rol === 'true'">
+                        <button (click)="mostrar=! mostrar" type="button " class="btn btn-sm btn-primary btn-block">                                                  
                            Mostrar/Ocultar Carga de Pago
                     </button>
-                    <div *ngIf="_servicePagos.alerta " class="alert alert-success alert-dismissible fade show animated fadeIn fast " role="alert ">
-                        <button type="button " class="close " data-dismiss="alert " aria-label="Close ">
-                                                  <span aria-hidden="true ">&times;</span>
-                                                </button>
+                    </div>
+                    <div class="col-md-12 col-sm-12" *ngIf="_servicePagos.alerta" class="alert alert-success alert-dismissible fade show animated fadeIn fast" role="alert">
+                        <button type="button " class="close" data-dismiss="alert" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                        </button>
                         <strong>Pago</strong> eliminado exitosamente
                     </div>
-                    <div *ngIf="_servicePagos.alerta2 " class="alert alert-success alert-dismissible fade show animated fadeIn fast " role="alert ">
-                        <button type="button " class="close " data-dismiss="alert " aria-label="Close ">
-                                                  <span aria-hidden="true ">&times;</span>
-                                                </button>
+                    <div class="col-md-12 col-sm-12" *ngIf="_servicePagos.alerta2" class="alert alert-success alert-dismissible fade show animated fadeIn fast" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                         </button>
                         <strong>Pago</strong> cargado con éxito
                     </div>
-                    <div class="row animated fadeIn fast ">
-                        <div class="col-md-12 " style="text-align: center; ">
-                            <table width="100% " *ngIf="!_servicePagos.loading && !_servicePagos.error && _servicePagos.pagos.length !=0 " class="table table-sm align-content-center table-striped table-hover puntero ">
-                                <thead>
-                                    <tr class="tamano_letra_peque bg-success color_blanco ">
-                                        <th class="text-center ">Id</th>
-                                        <th class="text-center ">Monto</th>
-                                        <th class="text-center ">Fecha</th>
-                                        <th class="text-center " width="70px ">Eliminar</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="tamano_letra_peque " *ngFor="let x of _servicePagos.pagos | trans; let i=index ">
-                                        <td class="text-center ">{{ _servicePagos.pagos[x].id }}</td>
-                                        <td class="text-center ">$ {{ (_servicePagos.pagos[x].monto | number:'.0-0').replace(',','.') }}</td>
-                                        <td class="text-center ">{{ _servicePagos.pagos[x].created_at | date:'dd-MM-yyyy' }}</td>
-                                        <td class="text-center ">
-                                            <button (click)="_servicePagos.eliminar_pagos(_servicePagos.pagos[x].id,x) " type="button " class="btn btn-sm btn-danger btn-block ">
-                                                       
-                                                               <i class="fas fa-trash "></i>
-                                            </button></td>
-
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div *ngIf="_servicePagos.pagos.length===0 && !_servicePagos.loading && !_servicePagos.error " style="margin-left: 25px; " class="alert col-md-11 alert-info " role="alert ">
-                            <strong>No hay</strong> pagos que mostrar
-                        </div>
-                        <div class="col-md-12 ">
-                            <div *ngIf="_servicePagos.loading " width="100% " class="alert alert-info " style="text-align: center; " role="alert ">
-
-                                <div class="loader loader--style1 " title="0 ">
-                                    <svg version="1.1 " id="loader-1 " xmlns="http://www.w3.org/2000/svg " xmlns:xlink="http://www.w3.org/1999/xlink " x="0px " y="0px " width="40px " height="40px " viewBox="0 0 40 40 " enable-background="new 0 0 40
+                    <div class="col-md-12 col-sm-12" *ngIf="_servicePagos.error" class="alert alert-danger alert-dismissible fade show animated fadeIn fast" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                  <span aria-hidden="true ">&times;</span>
+                         </button>
+                        <h4 class="alert-heading ">Error</h4>
+                        <p>{{ _servicePagos.mensajeError}}</p>
+                    </div>
+                    <div class="col-md-12 col-sm-12 ">
+                        <table *ngIf="!_servicePagos.loading && _servicePagos.pagos.length !=0 " class="table table-striped table-hover puntero">
+                            <thead thead-light>
+                                <tr class="tamano_letra_peque">
+                                    <th class="text-center">Id</th>
+                                    <th class="text-center ">Monto</th>
+                                    <th class="text-center ">Fecha</th>
+                                    <th *ngIf="sesiona.rol === 'true'" class="text-center ">Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="tamano_letra_peque " *ngFor="let x of _servicePagos.pagos | trans; let i=index ">
+                                    <td class="text-center ">{{ _servicePagos.pagos[x].id }}</td>
+                                    <td class="text-center ">Bs.&nbsp; {{ (_servicePagos.pagos[x].monto | number:'.0-0').replace(',','.') }}</td>
+                                    <td class="text-center ">{{ _servicePagos.pagos[x].created_at | date:'dd-MM-yyyy' }}</td>
+                                    <td class="text-center " *ngIf="sesiona.rol === 'true'">
+                                        <button (click)="_servicePagos.eliminar_pagos(_servicePagos.pagos[x].id,x)" type="button " class="btn btn-sm btn-danger btn-block ">
+                                               <i class="fas fa-trash "></i>
+                                            </button>
+                                    </td>
+                                </tr>
+                                <tr class="tamano_letra_peque">
+                                    <td class="text-center ">Total:</td>
+                                    <td class="text-center ">Bs.&nbsp; {{ (getTotal() | number:'.0-0').replace(',','.') }}</td>
+                                    <td class="text-center "></td>
+                                    <td class="text-center ">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div *ngIf="_servicePagos.pagos.length===0 && !_servicePagos.loading && !_servicePagos.error" class="alert col-md-12 alert-info" role="alert ">
+                        <strong>No hay</strong> pagos que mostrar
+                    </div>
+                    <div class="col-md-12 ">
+                        <div *ngIf="_servicePagos.loading" width="100% " style=" text-align: center;" role="alert ">
+                            <div class="loader loader--style1 " title="0 ">
+                                <svg version="1.1 " id="loader-1 " xmlns="http://www.w3.org/2000/svg " xmlns:xlink="http://www.w3.org/1999/xlink " x="0px " y="0px " width="40px " height="40px " viewBox="0 0 40 40 " enable-background="new 0 0 40
                         40 " xml:space="preserve ">
                                                 <path opacity="0.2 " fill="#000 " d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946 s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
                         c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z "/>
@@ -240,18 +249,11 @@
                                                     repeatCount="indefinite "/>
                                                   </path>
                                                 </svg>
-                                </div>
-                                <strong>Cargando...</strong>
                             </div>
+                            <strong>Cargando...</strong>
                         </div>
-                        <div *ngIf="_servicePagos.error " class="alert alert-danger animated fadeIn " style="margin-left: 25px; text-align: center; " role="alert ">
-                            <h4 class="alert-heading ">Error</h4>
-                            <p>{{ _servicePagos.mensajeError}}</p>
-                            <p class="mb-0 "></p>
-                        </div>
-
                     </div>
-                    <div class="modal-footer ">
+                    <div class="modal-footer">
                         <button (click)="cerrarModalPagos( 'NO') " type="button " class="btn btn-secondary ">Cerrar</button>
                     </div>
                 </div>

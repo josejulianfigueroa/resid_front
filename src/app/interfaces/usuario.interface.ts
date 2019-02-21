@@ -10,6 +10,7 @@ export interface Usuario {
     verified: string;
     verification_token: string;
     admin: string;
+    imagen: string;
     remember_toen: string;
     updated_at: string;
     created_at: string;

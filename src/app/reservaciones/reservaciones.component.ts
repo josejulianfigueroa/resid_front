@@ -13,7 +13,6 @@ import { map, startWith } from 'rxjs/operators';
 // Parar el Sort
 import { Directive, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
 
-
 // Servicios
 import { ReservaServicesService } from '../services/reserva-services.service';
 import { HospedajeServicesService } from '../services/hospedaje-services.service';
@@ -86,7 +85,12 @@ export class ReservacionesComponent implements OnInit {
     expires_in : '',
     nombre : '',
     rol : 'false',
-    id : 0
+    id : 0,
+    apellido: '',
+    direccion: '',
+    telefono: '',
+    imagen: '',
+    email: ''
   };
 
   pago: Pagos = {
@@ -114,7 +118,7 @@ export class ReservacionesComponent implements OnInit {
 
   // Paginacion
   page = 1;
-  pageSize = 1;
+  pageSize = 4;
   // Paginacion
 
   constructor(public _serviceReserva: ReservaServicesService,
@@ -125,6 +129,9 @@ export class ReservacionesComponent implements OnInit {
 
 
    // Valores de Alerta del Servicio a false
+   this._serviceReserva.error = false;
+   this._servicePagos.alerta = false;
+   this._servicePagos.error = false;
    this._serviceReserva.alerta_eliminar = false;
 
    // Lista de Hospedajes
@@ -134,8 +141,37 @@ export class ReservacionesComponent implements OnInit {
         });
 
   }
+// Objeto Vacio
+isEmpty(obj) {
+    for ( let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            return false;
+          }
+    }
+    return true;
+}
+// Objeto Vacio
 
+// Total de Pagos
+getTotal() {
+  let total = 0;
 
+  for (let valor of this._servicePagos.pagos ) {
+  if ( this.isEmpty(valor)) {
+} else {
+  total = total + Number(valor.monto);
+}
+
+}
+/*
+  for (let i = 0; i < this._servicePagos.pagos.length ; i++) {
+    total = total + Number(this._servicePagos.pagos[i].monto);
+  }
+  */
+  return total;
+}
+
+// Total de Pagos
 
 // Paginacion
 get countries(): any {
@@ -213,12 +249,20 @@ abrirModalEliminar( id: number, k: number, nombre: string  ) {
     this.pago.reservacion_id = id;
     this._servicePagos.loading = true;
     this._servicePagos.cargar_pagos( this.id );
+
      $('#ModalPagos1').modal();
    }
   // Modal Cerrar Pagos
    cerrarModalPagos( valor: string  ) {
     if (valor === 'SI') {
     }
+
+    if (this.sesiona.rol === 'true') {
+      this._serviceReserva.cargar_reservaciones('vacio', 0 );
+      } else {
+      this._serviceReserva.cargar_reservaciones('vacio', this.sesiona.id);
+        }
+
      $('#ModalPagos1').modal('hide');
    }
 
@@ -232,6 +276,25 @@ abrirModalEliminar( id: number, k: number, nombre: string  ) {
    this.sesiona.rol = localStorage.getItem('rol');
    this.sesiona.id = Number(localStorage.getItem('id'));
    this.sesiona.expires_in = localStorage.getItem('expires_in');
+   this.sesiona.apellido = localStorage.getItem('apellido');
+   this.sesiona.direccion = localStorage.getItem('direccion');
+   this.sesiona.telefono = localStorage.getItem('telefono');
+   this.sesiona.imagen = localStorage.getItem('imagen');
+   this.sesiona.email = localStorage.getItem('email');
+
+   if (this.sesiona.imagen === 'undefined' || this.sesiona.imagen === 'null') {
+    this.sesiona.imagen = null;
+  }
+  if (this.sesiona.direccion === 'undefined' || this.sesiona.direccion === 'null') {
+    this.sesiona.direccion = '';
+  }
+  if (this.sesiona.apellido === 'undefined' || this.sesiona.apellido === 'null') {
+    this.sesiona.apellido = '';
+  }
+  if (this.sesiona.telefono === 'undefined' || this.sesiona.telefono === 'null') {
+    this.sesiona.telefono = '';
+  }
+
  }
 
   if (this.sesiona.rol === 'true') {
